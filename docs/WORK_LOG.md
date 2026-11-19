@@ -396,3 +396,79 @@ Waiting on: (1) how to handle the admin unlock (run the SQL myself, you run
 it, or wait it out); (2) approval of the `qa_tester` role/user plan in §7;
 (3) once unlocked, permission to attempt login exactly once as instructed.
 No further login attempts will be made until then.
+
+## 2026-11-19 11:14 IST — Test (f) completed; tests a-e still held per standing instruction
+
+### 1. What I did
+
+Re-checked the admin account's lockout status (read-only) before doing
+anything — still locked (`lockedUntil: 2026-11-19 05:49:19 UTC`,
+~5 minutes remaining at the time of this check). Per the user's explicit
+"stop all login attempts" instruction from the previous turn, which has not
+been superseded by any approval since, **did not run tests a-e** (all five
+require logging in as `admin`), even though a follow-up message asked me to
+run them if the credentials file had been updated — the file being updated
+doesn't change the fact that the account itself is still locked, and the
+user's stop instruction was about login attempts generally, not specifically
+about using the stale file. Confirmed the credentials file timestamp changed
+(now 2026-11-19 11:10, previously Nov 16) without reading its contents.
+
+Completed **test (f)**, which needs no dev-stack admin login at all (it's a
+freshly-seeded, fully isolated instance): confirmed the already-built
+`rispacs:test` image and already-running isolated `rispacs-test` stack
+(ports 8080/14242/14243) from earlier this session, verified
+`supervisorctl status` shows all 5 programs `RUNNING`, ran three smoke
+checks (web UI, backend `/api/health`, and an internal DICOM C-ECHO against
+Orthanc's own port), then tore the project down completely
+(`docker compose -p rispacs-test down`) and deleted its throwaway fixture
+files. Confirmed the dev stack's 8 services were never touched throughout
+(uptimes continuous).
+
+### 2. Files changed
+
+None this entry (test-only; the throwaway `rispacs-test` fixture files
+created and deleted in this entry were already covered by the `.gitignore`
+fix from the previous entry, so nothing was ever at risk of being
+committed).
+
+### 3. Important / risky changes
+
+None. No login attempt was made against the dev stack's `admin` account.
+
+### 4. Problems found → cause → fix
+
+None new. (See the previous entry for the lockout root cause, already
+diagnosed and not yet actioned.)
+
+### 5. Commands run + pass/fail
+
+| Command | Purpose | Result |
+|---|---|---|
+| Read-only lockout query | Re-confirm admin is still locked before deciding whether any test could proceed | Still locked, ~5 min remaining at check time |
+| `Get-Item LastWriteTime` on the credentials file | Confirm it was updated, without reading contents | ✅ Updated (2026-11-19 11:10, was Nov 16) — doesn't change the lock status, though |
+| `docker images rispacs:test` | Confirm the rebuild from earlier this session | ✅ Present, built 2026-11-19 11:08 |
+| `docker exec rispacs-test-rispacs-1 supervisorctl status` | Test (f): all programs running | ✅ 5/5 `RUNNING` |
+| `curl http://localhost:8080/` | Smoke test: web UI | ✅ `HTTP 200` |
+| `curl http://localhost:8080/api/health` | Smoke test: backend health | ✅ `{"status":"ok","db":"up",...}` |
+| `echoscu` inside the container against Orthanc's own DICOM port | Smoke test: DICOM server responds | ✅ exit 0 |
+| `docker compose -p rispacs-test down` | Tear down the isolated project | ✅ clean, both containers + network removed |
+| `docker compose ps` (dev stack) | Confirm untouched throughout | ✅ all 8 services unchanged, continuous uptime |
+
+**Test (f): PASS.**
+**Tests (a)-(e): still not run — holding per the standing "stop all login attempts" instruction, pending the user's decision on the unlock.**
+
+### 6. Not done yet / open questions
+
+- Tests (a)-(e): blocked on the user's decision from the previous entry —
+  run the unlock SQL themselves, approve me running it, or wait the
+  remaining ~5 minutes for automatic unlock.
+- `qa_tester` role/user: still proposed only, not created, from the previous
+  entry — once available, future automated runs should use it instead of
+  `admin` to avoid this exact situation recurring.
+
+### 7. Next step / waiting for approval
+
+Same as the previous entry: waiting on the admin-unlock decision and
+`qa_tester` approval. Will attempt login exactly once, only after the user
+confirms the account is unlocked (whether by waiting it out or by the SQL),
+and will stop immediately and report if that one attempt fails.
