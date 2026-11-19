@@ -78,13 +78,26 @@ export function Modalities() {
     catch (e: any) { alert(e.message ?? 'Failed'); }
   }
 
+  // Maps the backend's specific outcome to the exact user-facing text —
+  // always the real result, never a hard-coded generic message.
+  function describeTestResult(res: { outcome: string; detail: string }): string {
+    switch (res.outcome) {
+      case 'ECHO_SUCCESS': return `✅ ${res.detail}`;
+      case 'TCP_UNREACHABLE': return `❌ TCP unreachable — ${res.detail}`;
+      case 'TCP_TIMEOUT': return `❌ Timeout — ${res.detail}`;
+      case 'ASSOCIATION_REJECTED': return `❌ Association rejected: ${res.detail}`;
+      case 'ECHO_TIMEOUT': return `❌ Timeout — ${res.detail}`;
+      default: return `❌ ${res.detail}`;
+    }
+  }
+
   async function testConnection(row: any) {
     setTestingId(row.id);
     try {
       const res = await api.post(`/modalities/${row.id}/test-connection`, {});
-      alert(res?.ok ? `Connection to ${row.name} succeeded.` : `Connection to ${row.name} failed: ${res?.message ?? 'unreachable'}`);
+      alert(`${row.name}: ${describeTestResult(res)}`);
     } catch (e: any) {
-      alert(`Connection test failed: ${e.message}`);
+      alert(`${row.name}: ❌ ${e.message}`);
     } finally { setTestingId(null); }
   }
 
@@ -106,7 +119,7 @@ export function Modalities() {
       </div>
 
       <div className="muted" style={{ fontSize: 12, marginBottom: 10 }}>
-        Field set is standard DICOM and flexible — pending the New Modality screenshot. Test Connection is a TCP probe; DICOM C-ECHO arrives in Phase 4.
+        Test Connection runs a TCP reachability check, then a real DICOM C-ECHO through Orthanc.
       </div>
 
       {list.error && <div className="error">{list.error}</div>}

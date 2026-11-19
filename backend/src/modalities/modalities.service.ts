@@ -1,7 +1,8 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, ConflictException } from '@nestjs/common';
 import * as net from 'net';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
+import { OrthancService } from '../orthanc/orthanc.service';
 import { AuthUser } from '../auth/current-user.decorator';
 import { PaginationQuery, paginate, buildOrderBy, skipTake } from '../common/pagination';
 import { orgScope } from '../common/tenant';
@@ -9,9 +10,17 @@ import { CreateModalityDto, UpdateModalityDto } from './dto';
 
 const SORTABLE = ['name', 'aeTitle', 'modalityType', 'active', 'createdAt'];
 
+export interface ModalityTestResult {
+  // Distinct, specific outcomes — never a single generic "unreachable" string.
+  outcome: 'ECHO_SUCCESS' | 'TCP_UNREACHABLE' | 'TCP_TIMEOUT' | 'ASSOCIATION_REJECTED' | 'ECHO_TIMEOUT' | 'ECHO_ERROR';
+  detail: string;
+  elapsedMs: number;
+}
+
 @Injectable()
 export class ModalitiesService {
-  constructor(private prisma: PrismaService, private audit: AuditService) {}
+  private readonly log = new Logger('ModalitiesService');
+  constructor(private prisma: PrismaService, private audit: AuditService, private orthanc: OrthancService) {}
 
   async list(user: AuthUser, q: PaginationQuery) {
     const where: any = { ...orgScope(user) };
@@ -58,24 +67,51 @@ export class ModalitiesService {
     return m;
   }
 
-  /**
-   * TCP reachability check to the modality's host:port.
-   * NOTE: this is a connectivity probe only. A true DICOM C-ECHO verification
-   * lands in Phase 4 with the DICOM stack. Documented as a stub.
-   */
-  async testConnection(user: AuthUser, id: string): Promise<{ reachable: boolean; detail: string }> {
-    const m = await this.get(user, id);
+  private tcpProbe(host: string, port: number, timeoutMs = 3000): Promise<{ ok: boolean; detail: string }> {
     return new Promise((resolve) => {
       const socket = new net.Socket();
-      const done = (reachable: boolean, detail: string) => {
-        socket.destroy();
-        resolve({ reachable, detail });
-      };
-      socket.setTimeout(3000);
-      socket.once('connect', () => done(true, `TCP connect to ${m.host}:${m.port} OK (DICOM C-ECHO in Phase 4)`));
-      socket.once('timeout', () => done(false, `Timeout connecting to ${m.host}:${m.port}`));
-      socket.once('error', (e) => done(false, `Error: ${e.message}`));
-      socket.connect(m.port, m.host);
+      const done = (ok: boolean, detail: string) => { socket.destroy(); resolve({ ok, detail }); };
+      socket.setTimeout(timeoutMs);
+      socket.once('connect', () => done(true, `TCP connect to ${host}:${port} OK`));
+      socket.once('timeout', () => done(false, `Timeout connecting to ${host}:${port}`));
+      socket.once('error', (e) => done(false, `TCP error: ${e.message}`));
+      socket.connect(port, host);
     });
+  }
+
+  /**
+   * Real two-step connectivity test: a fast TCP reachability check, then — if
+   * that succeeds — an actual DICOM C-ECHO through Orthanc's native SCU
+   * (registers a temporary modality, echoes it, always deregisters it in a
+   * finally block so a failed test never leaves a leftover /modalities entry
+   * — see docs/DICOM_CONNECTIVITY_ROOT_CAUSE_ANALYSIS.md §8 item 4).
+   * Returns one of a fixed set of specific outcomes; never a single generic
+   * "unreachable" string regardless of what actually happened.
+   */
+  async testConnection(user: AuthUser, id: string): Promise<ModalityTestResult> {
+    const m = await this.get(user, id);
+    const t0 = Date.now();
+
+    const tcp = await this.tcpProbe(m.host, m.port);
+    if (!tcp.ok) {
+      const outcome = /timeout/i.test(tcp.detail) ? 'TCP_TIMEOUT' : 'TCP_UNREACHABLE';
+      return { outcome, detail: tcp.detail, elapsedMs: Date.now() - t0 };
+    }
+
+    const modId = `modtest_${m.id.slice(0, 8)}`;
+    try {
+      await this.orthanc.putModality(modId, m.aeTitle, m.host, m.port);
+      const echo = await this.orthanc.echoModality(modId, 10);
+      if (echo.ok) {
+        return { outcome: 'ECHO_SUCCESS', detail: `C-ECHO successful (${echo.elapsedMs}ms)`, elapsedMs: Date.now() - t0 };
+      }
+      const outcome = echo.reason === 'timeout' ? 'ECHO_TIMEOUT' : echo.reason === 'rejected' ? 'ASSOCIATION_REJECTED' : 'ECHO_ERROR';
+      return { outcome, detail: echo.detail ?? 'C-ECHO failed', elapsedMs: Date.now() - t0 };
+    } catch (e: any) {
+      this.log.warn(`testConnection(${id}): ${e?.message}`);
+      return { outcome: 'ECHO_ERROR', detail: e?.message ?? 'Unknown error', elapsedMs: Date.now() - t0 };
+    } finally {
+      await this.orthanc.deleteModality(modId);
+    }
   }
 }

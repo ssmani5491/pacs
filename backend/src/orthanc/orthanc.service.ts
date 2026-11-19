@@ -96,13 +96,30 @@ export class OrthancService {
     try { await this.req(`/modalities/${encodeURIComponent(id)}`, { method: 'DELETE' }); } catch { /* ignore */ }
   }
 
-  /** C-ECHO test to a registered modality. Returns true on success. */
-  async echoModality(id: string): Promise<{ ok: boolean; detail?: string }> {
+  /**
+   * C-ECHO test to a registered modality. Reports elapsed time and a
+   * classified failure reason (rejected vs. timeout vs. other) derived from
+   * Orthanc's actual response, instead of only an HTTP status code.
+   */
+  async echoModality(id: string, timeoutSeconds?: number): Promise<{ ok: boolean; elapsedMs: number; reason?: string; detail?: string }> {
+    const t0 = Date.now();
     try {
-      await this.req(`/modalities/${encodeURIComponent(id)}/echo`, { method: 'POST', body: JSON.stringify({}), headers: { 'Content-Type': 'application/json' } });
-      return { ok: true };
+      const body: Record<string, any> = {};
+      if (timeoutSeconds) body.Timeout = timeoutSeconds;
+      await this.req(`/modalities/${encodeURIComponent(id)}/echo`, { method: 'POST', body: JSON.stringify(body), headers: { 'Content-Type': 'application/json' } });
+      return { ok: true, elapsedMs: Date.now() - t0 };
     } catch (e: any) {
-      return { ok: false, detail: e?.message };
+      const elapsedMs = Date.now() - t0;
+      const bodyText: string = e?.body ?? '';
+      let reason = 'error';
+      // Orthanc's own wording for a rejected DICOM association vs. a timed-out
+      // one differs; classify from the response body text it returns.
+      if (/timeout|timed out/i.test(bodyText) || /timeout|timed out/i.test(e?.message ?? '')) {
+        reason = 'timeout';
+      } else if (/association|reject/i.test(bodyText)) {
+        reason = 'rejected';
+      }
+      return { ok: false, elapsedMs, reason, detail: bodyText || e?.message };
     }
   }
 
