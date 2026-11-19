@@ -782,3 +782,32 @@ Re-verified the actual repo state against a "fresh session" message describing t
 
 **7. Next step**
 Waiting for the user to say go/no-go on `git push origin main`.
+
+## 2026-11-19 18:15 IST — Pushed main to origin (release sync point); main and dev now identical on origin
+
+📝 Work Notes
+
+**1. What I did**
+Pushed local `main` to `origin/main`, per explicit go-ahead, bringing the remote `main` branch's history fully up to date with everything done in this session's Jenkinsfile work (the 4 original fixes, the CR-strip fix, the widened `.gitattributes`, and the work-log entries). Confirmed the result matches `origin/dev` exactly.
+
+**2. Files changed**
+None — this was a git push only, no new file changes.
+
+**3. Important/risky changes**
+- Pushed to `origin/main` (fast-forward, `707de51` → `733e504`, no force, no history rewrite) — this is the action that triggers Jenkins to build the `main` branch, which per the documented release process (`deploy/allinone/README.md`) means a `vX.Y.Z` tag and the production image will be created on the next Jenkins run against this branch.
+
+**4. Commands run + pass/fail**
+- `git push origin main`: **success**, fast-forward `707de51..733e504`.
+- `git fetch origin` + `git log --oneline -3 origin/main`:
+  ```
+  733e504 docs: log main/dev divergence check, widened .gitattributes, local main fast-forward (not yet pushed)
+  0b71849 chore: widen .gitattributes LF enforcement to Dockerfiles, configs, lua, py, ini.example, Jenkinsfile
+  261ba64 docs: log Jenkinsfile review/fixes, dev branch creation, smoke-test verification
+  ```
+- `git rev-parse origin/main` vs `git rev-parse origin/dev`: **identical** (`733e504...`) — confirmed `origin/main == origin/dev`.
+
+**5. Not done yet / open questions**
+- None from this step. Whether/when to actually trigger the Jenkins build (vs. just having pushed the branch) is up to the user's Jenkins setup (poll interval or webhook).
+
+**6. Next step**
+`origin/main` and `origin/dev` are in sync. Awaiting the user's next instruction — e.g., whether to let Jenkins's next poll pick up `main` and cut `v1.0.2`, or do anything else first.
