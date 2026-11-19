@@ -1,0 +1,298 @@
+- generic [ref=f8e3]:
+  - complementary [ref=f8e4]:
+    - generic [ref=f8e5]:
+      - generic [ref=f8e6]: 🩻 RIS·PACS
+      - generic [ref=f8e7]: Enterprise Edition
+    - navigation [ref=f8e8]:
+      - generic [ref=f8e9]:
+        - generic [ref=f8e10]: Overview
+        - link "Dashboard" [ref=f8e11] [cursor=pointer]:
+          - /url: /
+      - generic [ref=f8e12]:
+        - generic [ref=f8e13]: Radiology
+        - link "Worklist" [ref=f8e14] [cursor=pointer]:
+          - /url: /worklist
+        - link "Patients" [ref=f8e15] [cursor=pointer]:
+          - /url: /patients
+        - link "Examination Orders" [ref=f8e16] [cursor=pointer]:
+          - /url: /orders
+      - generic [ref=f8e17]:
+        - generic [ref=f8e18]: PACS
+        - link "PACS Monitoring" [ref=f8e19] [cursor=pointer]:
+          - /url: /pacs/monitor
+        - link "Reception Logs" [ref=f8e20] [cursor=pointer]:
+          - /url: /pacs/reception-logs
+        - link "Reconciliation" [ref=f8e21] [cursor=pointer]:
+          - /url: /pacs/reconciliation
+        - link "Modality Worklist" [ref=f8e22] [cursor=pointer]:
+          - /url: /pacs/mwl
+      - generic [ref=f8e23]:
+        - generic [ref=f8e24]: PACS Operations
+        - link "Command Centre" [ref=f8e25] [cursor=pointer]:
+          - /url: /pacs/operations/command-centre
+        - link "Exceptions Console" [ref=f8e26] [cursor=pointer]:
+          - /url: /pacs/operations/exceptions
+        - link "Reverse Push Monitor" [ref=f8e27] [cursor=pointer]:
+          - /url: /pacs/reverse-push
+        - link "Archive Compression" [ref=f8e28] [cursor=pointer]:
+          - /url: /pacs/archive
+        - link "Storage Management" [ref=f8e29] [cursor=pointer]:
+          - /url: /pacs/storage
+        - link "Transfer & Archive History" [ref=f8e30] [cursor=pointer]:
+          - /url: /pacs/operations/history
+      - generic [ref=f8e31]:
+        - generic [ref=f8e32]: Reporting
+        - link "Reporting Worklist" [ref=f8e33] [cursor=pointer]:
+          - /url: /reporting
+      - generic [ref=f8e34]:
+        - generic [ref=f8e35]: Operations
+        - link "Notifications" [ref=f8e36] [cursor=pointer]:
+          - /url: /notifications
+        - link "System Monitoring" [ref=f8e37] [cursor=pointer]:
+          - /url: /ops/monitoring
+        - link "Alert Management" [ref=f8e38] [cursor=pointer]:
+          - /url: /ops/alerts
+        - link "Audit Logs" [ref=f8e39] [cursor=pointer]:
+          - /url: /ops/audit
+      - generic [ref=f8e40]:
+        - generic [ref=f8e41]: Administration
+        - link "Organizations" [ref=f8e42] [cursor=pointer]:
+          - /url: /admin/organizations
+        - link "Departments" [ref=f8e43] [cursor=pointer]:
+          - /url: /admin/departments
+        - link "Doctors" [ref=f8e44] [cursor=pointer]:
+          - /url: /admin/doctors
+        - link "Users" [ref=f8e45] [cursor=pointer]:
+          - /url: /admin/users
+        - link "Modalities" [ref=f8e46] [cursor=pointer]:
+          - /url: /admin/modalities
+        - link "Report Templates" [ref=f8e47] [cursor=pointer]:
+          - /url: /admin/report-templates
+  - banner [ref=f8e48]:
+    - strong [ref=f8e49]: Administration
+    - generic [ref=f8e50]:
+      - button "Notifications" [ref=f8e52] [cursor=pointer]: 🔔
+      - button "🌙" [ref=f8e53] [cursor=pointer]
+      - generic [ref=f8e54]: admin (super admin)
+      - button "Logout" [ref=f8e55] [cursor=pointer]
+  - main [ref=f8e56]:
+    - generic [ref=f8e57]:
+      - generic [ref=f8e58]:
+        - heading "RIS Worklist" [level=1] [ref=f8e59]
+        - generic [ref=f8e60]:
+          - checkbox "My Assignment" [ref=f8e61]
+          - text: My Assignment
+      - generic [ref=f8e62]:
+        - generic [ref=f8e63]:
+          - generic [ref=f8e64]:
+            - generic [ref=f8e65]: Patient ID
+            - textbox [ref=f8e66]: VIEWERVOL01
+          - generic [ref=f8e67]:
+            - generic [ref=f8e68]: Patient Name
+            - textbox [ref=f8e69]
+          - generic [ref=f8e70]:
+            - generic [ref=f8e71]: Accession No
+            - textbox [ref=f8e72]
+          - generic [ref=f8e73]:
+            - generic [ref=f8e74]: From / To
+            - generic [ref=f8e75]:
+              - textbox [ref=f8e76]
+              - textbox [ref=f8e77]
+        - generic [ref=f8e78]: Modality
+        - generic [ref=f8e79]:
+          - generic [ref=f8e80]:
+            - checkbox "CT" [ref=f8e81]
+            - text: CT
+          - generic [ref=f8e82]:
+            - checkbox "MR" [ref=f8e83]
+            - text: MR
+          - generic [ref=f8e84]:
+            - checkbox "CR" [ref=f8e85]
+            - text: CR
+          - generic [ref=f8e86]:
+            - checkbox "DX" [ref=f8e87]
+            - text: DX
+          - generic [ref=f8e88]:
+            - checkbox "US" [ref=f8e89]
+            - text: US
+          - generic [ref=f8e90]:
+            - checkbox "MG" [ref=f8e91]
+            - text: MG
+          - generic [ref=f8e92]:
+            - checkbox "NM" [ref=f8e93]
+            - text: NM
+          - generic [ref=f8e94]:
+            - checkbox "PT" [ref=f8e95]
+            - text: PT
+          - generic [ref=f8e96]:
+            - checkbox "XA" [ref=f8e97]
+            - text: XA
+        - generic [ref=f8e98]:
+          - button "Search" [ref=f8e99] [cursor=pointer]
+          - button "Clear" [ref=f8e100] [cursor=pointer]
+      - generic [ref=f8e101]:
+        - button "ALL (3)" [ref=f8e568] [cursor=pointer]
+        - button "READY (3)" [ref=f8e569] [cursor=pointer]
+        - button "DRAFT (0)" [ref=f8e570] [cursor=pointer]
+        - button "PRELIMINARY (0)" [ref=f8e571] [cursor=pointer]
+        - button "FINAL (0)" [ref=f8e572] [cursor=pointer]
+        - button "CANCELLED (0)" [ref=f8e573] [cursor=pointer]
+        - button "PENDING (3)" [ref=f8e574] [cursor=pointer]
+        - generic [ref=f8e109]: "Rows:"
+        - combobox [ref=f8e110]:
+          - option "10"
+          - option "20" [selected]
+          - option "50"
+          - option "100"
+      - generic [ref=f8e111]:
+        - table [ref=f8e112]:
+          - rowgroup [ref=f8e113]:
+            - row [ref=f8e114]:
+              - columnheader "Sl" [ref=f8e115] [cursor=pointer]
+              - columnheader "Patient ID" [ref=f8e116] [cursor=pointer]
+              - columnheader "Patient Name" [ref=f8e117] [cursor=pointer]
+              - columnheader "Accession" [ref=f8e118] [cursor=pointer]
+              - columnheader "Study Date" [ref=f8e119] [cursor=pointer]
+              - columnheader "Time" [ref=f8e120] [cursor=pointer]
+              - columnheader "Modality" [ref=f8e121] [cursor=pointer]
+              - columnheader "Description" [ref=f8e122] [cursor=pointer]
+              - columnheader "Ref Doctor" [ref=f8e123] [cursor=pointer]
+              - columnheader "Assigned" [ref=f8e124] [cursor=pointer]
+              - columnheader "Status" [ref=f8e125] [cursor=pointer]
+              - columnheader "Images" [ref=f8e126] [cursor=pointer]
+              - columnheader "Actions" [ref=f8e127] [cursor=pointer]
+          - rowgroup [ref=f8e128]:
+            - row [ref=f8e575]:
+              - cell "1" [ref=f8e576]
+              - cell "VIEWERVOL01" [ref=f8e577]
+              - cell "Viewer Test Patient" [ref=f8e578]
+              - cell "20261114000002" [ref=f8e579]
+              - cell "11/14/2026" [ref=f8e580]
+              - cell "5:30:00 AM" [ref=f8e581]
+              - cell "CT" [ref=f8e582]
+              - cell "CT CHEST PRIOR" [ref=f8e583]
+              - cell "—" [ref=f8e584]
+              - cell "—" [ref=f8e585]
+              - cell "READY" [ref=f8e586]
+              - cell "150" [ref=f8e587]
+              - cell [ref=f8e588]:
+                - generic [ref=f8e589]:
+                  - button "Open Study" [ref=f8e590] [cursor=pointer]
+                  - button "Report" [ref=f8e591] [cursor=pointer]
+                  - button "Operations" [active] [ref=f8e592] [cursor=pointer]
+            - row [ref=f8e593]:
+              - cell "2" [ref=f8e594]
+              - cell "VIEWERVOL01" [ref=f8e595]
+              - cell "Viewer Test Patient" [ref=f8e596]
+              - cell "20261114000001" [ref=f8e597]
+              - cell "11/14/2026" [ref=f8e598]
+              - cell "5:30:00 AM" [ref=f8e599]
+              - cell "CT" [ref=f8e600]
+              - cell "CT CHEST VOLUME" [ref=f8e601]
+              - cell "—" [ref=f8e602]
+              - cell "—" [ref=f8e603]
+              - cell "READY" [ref=f8e604]
+              - cell "300" [ref=f8e605]
+              - cell [ref=f8e606]:
+                - generic [ref=f8e607]:
+                  - button "Open Study" [ref=f8e608] [cursor=pointer]
+                  - button "Report" [ref=f8e609] [cursor=pointer]
+                  - button "Operations" [ref=f8e610] [cursor=pointer]
+            - row [ref=f8e611]:
+              - cell "3" [ref=f8e612]
+              - cell "VIEWERVOL01" [ref=f8e613]
+              - cell "Viewer Test Patient" [ref=f8e614]
+              - cell "20261114000003" [ref=f8e615]
+              - cell "11/14/2026" [ref=f8e616]
+              - cell "5:30:00 AM" [ref=f8e617]
+              - cell "CT" [ref=f8e618]
+              - cell "CT WHOLE BODY LARGE" [ref=f8e619]
+              - cell "—" [ref=f8e620]
+              - cell "—" [ref=f8e621]
+              - cell "READY" [ref=f8e622]
+              - cell "2000" [ref=f8e623]
+              - cell [ref=f8e624]:
+                - generic [ref=f8e625]:
+                  - button "Open Study" [ref=f8e626] [cursor=pointer]
+                  - button "Report" [ref=f8e627] [cursor=pointer]
+                  - button "Operations" [ref=f8e628] [cursor=pointer]
+        - generic [ref=f8e131]:
+          - generic [ref=f8e132]: 3 total · page 1/1
+          - button "Prev" [disabled] [ref=f8e133] [cursor=pointer]
+          - button "Next" [disabled] [ref=f8e134] [cursor=pointer]
+      - generic [ref=f8e630]:
+        - generic [ref=f8e631]:
+          - heading "Study Operations" [level=2] [ref=f8e632]
+          - button "Close" [ref=f8e633] [cursor=pointer]
+        - generic [ref=f8e635]:
+          - generic [ref=f8e636]:
+            - generic [ref=f8e637]: Study UID
+            - generic [ref=f8e638]: 1.2.826.0.1.3680043.8.498.79046984409264423840184171474939134956
+          - generic [ref=f8e639]:
+            - generic [ref=f8e640]: Patient
+            - generic [ref=f8e641]: VIEWERVOL01
+          - generic [ref=f8e642]:
+            - generic [ref=f8e643]: Modality
+            - generic [ref=f8e644]: CT
+          - generic [ref=f8e645]:
+            - generic [ref=f8e646]: Instances
+            - generic [ref=f8e647]: "150"
+          - generic [ref=f8e648]:
+            - generic [ref=f8e649]: Accession
+            - generic [ref=f8e650]: "20261114000002"
+          - generic [ref=f8e651]:
+            - generic [ref=f8e652]: Study Storage
+            - generic [ref=f8e653]: 18.9 MB
+        - generic [ref=f8e654]:
+          - generic [ref=f8e655]:
+            - generic [ref=f8e656]: Transfers
+            - generic [ref=f8e657]: "2"
+          - generic [ref=f8e658]:
+            - generic [ref=f8e659]: Archives
+            - generic [ref=f8e660]: "1"
+          - generic [ref=f8e661]:
+            - generic [ref=f8e662]: Verified
+            - generic [ref=f8e663]: "0"
+          - generic [ref=f8e664]:
+            - generic [ref=f8e665]: Failures
+            - generic [ref=f8e666]: "0"
+        - button "Push study to destination…" [ref=f8e668] [cursor=pointer]
+        - heading "Reverse Push History" [level=3] [ref=f8e669]
+        - table [ref=f8e671]:
+          - rowgroup [ref=f8e672]:
+            - row [ref=f8e673]:
+              - columnheader "Status" [ref=f8e674] [cursor=pointer]
+              - columnheader "Destination" [ref=f8e675] [cursor=pointer]
+              - columnheader "Instances" [ref=f8e676] [cursor=pointer]
+              - columnheader "Created" [ref=f8e677] [cursor=pointer]
+              - columnheader "Completed" [ref=f8e678] [cursor=pointer]
+          - rowgroup [ref=f8e679]:
+            - row [ref=f8e680]:
+              - cell "COMPLETED" [ref=f8e681]
+              - cell "Test Dest Orthanc" [ref=f8e682]
+              - cell "150/150" [ref=f8e683]
+              - cell "11/14/2026, 3:38:29 PM" [ref=f8e684]
+              - cell "11/14/2026, 3:38:32 PM" [ref=f8e685]
+            - row [ref=f8e686]:
+              - cell "COMPLETED" [ref=f8e687]
+              - cell "Test Dest Orthanc" [ref=f8e688]
+              - cell "150/150" [ref=f8e689]
+              - cell "11/14/2026, 3:37:49 PM" [ref=f8e690]
+              - cell "11/14/2026, 3:37:54 PM" [ref=f8e691]
+        - heading "Archive History & Integrity" [level=3] [ref=f8e692]
+        - table [ref=f8e694]:
+          - rowgroup [ref=f8e695]:
+            - row [ref=f8e696]:
+              - columnheader "Status" [ref=f8e697] [cursor=pointer]
+              - columnheader "Original → Compressed" [ref=f8e698] [cursor=pointer]
+              - columnheader "Verified" [ref=f8e699] [cursor=pointer]
+              - columnheader "Created" [ref=f8e700] [cursor=pointer]
+              - columnheader "Completed" [ref=f8e701] [cursor=pointer]
+          - rowgroup [ref=f8e702]:
+            - row [ref=f8e703]:
+              - cell "CANCELLED" [ref=f8e704]
+              - cell "— → —" [ref=f8e705]
+              - cell "—" [ref=f8e706]
+              - cell "11/14/2026, 4:06:47 PM" [ref=f8e707]
+              - cell "11/14/2026, 4:06:47 PM" [ref=f8e708]
+        - generic [ref=f8e709]: "Latest integrity: NOT VERIFIED · — · —"

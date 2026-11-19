@@ -1,0 +1,11 @@
+- generic [ref=f7e4]:
+  - generic [ref=f7e5]:
+    - text: 🩻 RIS·PACS
+    - generic [ref=f7e6]: Enterprise Edition
+  - heading "Sign in" [level=1] [ref=f7e7]
+  - paragraph [ref=f7e8]: Radiology administration console
+  - generic [ref=f7e9]: Username
+  - textbox [active] [ref=f7e10]
+  - generic [ref=f7e11]: Password
+  - textbox [ref=f7e12]
+  - button "Sign in" [ref=f7e13] [cursor=pointer]

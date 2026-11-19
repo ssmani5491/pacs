@@ -1,0 +1,126 @@
+- generic [ref=e14]:
+  - complementary [ref=e15]:
+    - generic [ref=e16]:
+      - generic [ref=e17]: 🩻 RIS·PACS
+      - generic [ref=e18]: Enterprise Edition
+    - navigation [ref=e19]:
+      - generic [ref=e20]:
+        - generic [ref=e21]: Overview
+        - link "Dashboard" [ref=e22] [cursor=pointer]:
+          - /url: /
+      - generic [ref=e23]:
+        - generic [ref=e24]: Radiology
+        - link "Worklist" [ref=e25] [cursor=pointer]:
+          - /url: /worklist
+        - link "Patients" [ref=e26] [cursor=pointer]:
+          - /url: /patients
+        - link "Examination Orders" [ref=e27] [cursor=pointer]:
+          - /url: /orders
+      - generic [ref=e28]:
+        - generic [ref=e29]: Administration
+        - link "Organizations" [ref=e30] [cursor=pointer]:
+          - /url: /admin/organizations
+        - link "Departments" [ref=e31] [cursor=pointer]:
+          - /url: /admin/departments
+        - link "Doctors" [ref=e32] [cursor=pointer]:
+          - /url: /admin/doctors
+        - link "Users" [ref=e33] [cursor=pointer]:
+          - /url: /admin/users
+        - link "Modalities" [ref=e34] [cursor=pointer]:
+          - /url: /admin/modalities
+  - banner [ref=e35]:
+    - strong [ref=e36]: Administration
+    - generic [ref=e37]:
+      - button "🌙" [ref=e38] [cursor=pointer]
+      - generic [ref=e39]: admin (super admin)
+      - button "Logout" [ref=e40] [cursor=pointer]
+  - main [ref=e41]:
+    - generic [ref=e42]:
+      - heading "Dashboard" [level=1] [ref=e44]
+      - heading "Clinical" [level=3] [ref=e45]
+      - generic [ref=e46]:
+        - generic [ref=e47]:
+          - generic [ref=e48]: "1000"
+          - generic [ref=e49]: Total Patients
+        - generic [ref=e50]:
+          - generic [ref=e51]: "1000"
+          - generic [ref=e52]: Today's Registrations
+        - generic [ref=e53]:
+          - generic [ref=e54]: "5000"
+          - generic [ref=e55]: Examination Orders
+        - generic [ref=e56]:
+          - generic [ref=e57]: "5000"
+          - generic [ref=e58]: Today's Examinations
+        - generic [ref=e59]:
+          - generic [ref=e60]: "5000"
+          - generic [ref=e61]: Total Studies
+        - generic [ref=e62]:
+          - generic [ref=e63]: "1980"
+          - generic [ref=e64]: Pending Studies
+      - heading "Reporting" [level=3] [ref=e65]
+      - generic [ref=e66]:
+        - generic [ref=e67]:
+          - generic [ref=e68]: "1015"
+          - generic [ref=e69]: Ready for Reporting
+        - generic [ref=e70]:
+          - generic [ref=e71]: "965"
+          - generic [ref=e72]: Draft
+        - generic [ref=e73]:
+          - generic [ref=e74]: "1046"
+          - generic [ref=e75]: Preliminary
+        - generic [ref=e76]:
+          - generic [ref=e77]: "1000"
+          - generic [ref=e78]: Final
+        - generic [ref=e79]:
+          - generic [ref=e80]: "974"
+          - generic [ref=e81]: Cancelled
+      - heading "Modality-wise Studies" [level=3] [ref=e82]
+      - generic [ref=e83]:
+        - generic [ref=e84]:
+          - generic [ref=e85]: "549"
+          - generic [ref=e86]: CR
+        - generic [ref=e87]:
+          - generic [ref=e88]: "602"
+          - generic [ref=e89]: CT
+        - generic [ref=e90]:
+          - generic [ref=e91]: "586"
+          - generic [ref=e92]: DX
+        - generic [ref=e93]:
+          - generic [ref=e94]: "547"
+          - generic [ref=e95]: MG
+        - generic [ref=e96]:
+          - generic [ref=e97]: "521"
+          - generic [ref=e98]: MR
+        - generic [ref=e99]:
+          - generic [ref=e100]: "584"
+          - generic [ref=e101]: NM
+        - generic [ref=e102]:
+          - generic [ref=e103]: "535"
+          - generic [ref=e104]: PT
+        - generic [ref=e105]:
+          - generic [ref=e106]: "548"
+          - generic [ref=e107]: US
+        - generic [ref=e108]:
+          - generic [ref=e109]: "528"
+          - generic [ref=e110]: XA
+      - heading "Administration" [level=3] [ref=e111]
+      - generic [ref=e112]:
+        - generic [ref=e113]:
+          - generic [ref=e114]: "1"
+          - generic [ref=e115]: Organizations
+        - generic [ref=e116]:
+          - generic [ref=e117]: "0"
+          - generic [ref=e118]: Departments
+        - generic [ref=e119]:
+          - generic [ref=e120]: "0"
+          - generic [ref=e121]: Doctors
+        - generic [ref=e122]:
+          - generic [ref=e123]: "2"
+          - generic [ref=e124]: Users
+        - generic [ref=e125]:
+          - generic [ref=e126]: "0"
+          - generic [ref=e127]: Modalities
+        - generic [ref=e128]:
+          - generic [ref=e129]: "0"
+          - generic [ref=e130]: Active Modalities
+      - paragraph [ref=e131]: All counts are live from the database.

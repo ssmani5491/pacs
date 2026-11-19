@@ -1,0 +1,159 @@
+- generic [ref=f1e2]:
+  - region "Notifications alt+T"
+  - generic [ref=f1e3]:
+    - generic [ref=f1e5]:
+      - generic [ref=f1e7] [cursor=pointer]
+      - generic [ref=f1e26]:
+        - generic [ref=f1e28]:
+          - button "Length" [ref=f1e32] [cursor=pointer]
+          - button [ref=f1e46] [cursor=pointer]
+        - button "Zoom" [ref=f1e54] [cursor=pointer]
+        - button "Pan" [ref=f1e63] [cursor=pointer]
+        - generic [ref=f1e73]:
+          - button "3D Rotate" [disabled]
+        - button "Window Level" [ref=f1e77] [cursor=pointer]
+        - button "Capture" [ref=f1e86] [cursor=pointer]
+        - button "Change layout" [ref=f1e539] [cursor=pointer]
+        - button "Crosshairs" [ref=f1e552] [cursor=pointer]
+        - generic [ref=f1e113]:
+          - button "Reset View" [ref=f1e117] [cursor=pointer]
+          - button [ref=f1e125] [cursor=pointer]
+      - generic [ref=f1e130]:
+        - generic [ref=f1e131] [cursor=pointer]:
+          - button [ref=f1e132]
+          - button [ref=f1e140]
+        - generic [ref=f1e149] [cursor=pointer]: Patient
+        - button [ref=f1e165] [cursor=pointer]
+    - generic [ref=f1e174]:
+      - generic [ref=f1e176]:
+        - generic [ref=f1e178] [cursor=pointer]:
+          - img "icon-panel-close-left" [ref=f1e180]
+          - generic [ref=f1e186]: Studies
+        - generic [ref=f1e189]:
+          - img [ref=f1e192] [cursor=pointer]
+          - group [ref=f1e201]:
+            - radio "list" [ref=f1e202] [cursor=pointer]
+            - radio "thumbnails" [checked] [ref=f1e209] [cursor=pointer]
+        - generic [ref=f1e221]:
+          - button [ref=f1e222] [cursor=pointer]:
+            - heading [level=3] [ref=f1e224]:
+              - button "14-Nov-2026 CT WHOLE BODY LARGE CT 2000" [ref=f1e225]:
+                - generic [ref=f1e227]:
+                  - generic [ref=f1e228]:
+                    - generic [ref=f1e229]: 14-Nov-2026
+                    - generic [ref=f1e230]: CT WHOLE BODY LARGE
+                  - generic [ref=f1e231]:
+                    - generic [ref=f1e232]: CT
+                    - generic [ref=f1e233]: "2000"
+          - button [ref=f1e236] [cursor=pointer]:
+            - generic [ref=f1e237]:
+              - heading [level=3] [ref=f1e238]:
+                - button "14-Nov-2026 CT CHEST VOLUME CT 300" [expanded] [ref=f1e239]:
+                  - generic [ref=f1e241]:
+                    - generic [ref=f1e242]:
+                      - generic [ref=f1e243]: 14-Nov-2026
+                      - generic [ref=f1e244]: CT CHEST VOLUME
+                    - generic [ref=f1e245]:
+                      - generic [ref=f1e246]: CT
+                      - generic [ref=f1e247]: "300"
+              - region "14-Nov-2026 CT CHEST VOLUME CT 300" [ref=f1e250]:
+                - button "CT CT CHEST VOLUME S:1 info-mpr 300" [ref=f1e255]:
+                  - generic [ref=f1e257]:
+                    - generic [ref=f1e258]: CT
+                    - generic [ref=f1e265]:
+                      - button "CT CHEST VOLUME" [ref=f1e266]
+                      - generic [ref=f1e268]:
+                        - generic [ref=f1e269]: S:1
+                        - generic [ref=f1e271]:
+                          - img "info-mpr" [ref=f1e272]
+                          - generic [ref=f1e278]: "300"
+          - button [ref=f1e279] [cursor=pointer]:
+            - heading [level=3] [ref=f1e281]:
+              - button "14-Nov-2026 CT CHEST PRIOR CT 150" [ref=f1e282]:
+                - generic [ref=f1e284]:
+                  - generic [ref=f1e285]:
+                    - generic [ref=f1e286]: 14-Nov-2026
+                    - generic [ref=f1e287]: CT CHEST PRIOR
+                  - generic [ref=f1e288]:
+                    - generic [ref=f1e289]: CT
+                    - generic [ref=f1e290]: "150"
+      - separator [ref=f1e293]
+      - generic [ref=f1e298]:
+        - generic [ref=f1e561]:
+          - generic [ref=f1e562]:
+            - generic:
+              - slider "Image navigation scrollbar" [ref=f1e568]
+              - generic:
+                - generic:
+                  - generic:
+                    - generic "Study date": 14-Nov-2026
+                  - generic:
+                    - generic "Series description": CT CHEST VOLUME
+                - generic:
+                  - generic:
+                    - generic "Instance Number": I:151 (151/300)
+                - generic:
+                  - generic:
+                    - generic "Window Level":
+                      - generic: "W:"
+                      - generic: "2500"
+                      - generic: "L:"
+                      - generic: "480"
+              - generic:
+                - generic: A
+                - generic: R
+          - generic:
+            - generic [ref=f1e575]:
+              - button "Orientation" [ref=f1e579] [cursor=pointer]
+              - button "Data Overlay" [ref=f1e588] [cursor=pointer]
+            - button "Window Level" [ref=f1e598] [cursor=pointer]
+        - generic [ref=f1e612]:
+          - generic:
+            - slider "Image navigation scrollbar" [ref=f1e618]
+            - generic:
+              - generic:
+                - generic:
+                  - generic "Study date": 14-Nov-2026
+                - generic:
+                  - generic "Series description": CT CHEST VOLUME
+              - generic:
+                - generic:
+                  - generic "Instance Number": 129/256
+              - generic:
+                - generic:
+                  - generic "Window Level":
+                    - generic: "W:"
+                    - generic: "2500"
+                    - generic: "L:"
+                    - generic: "480"
+            - generic:
+              - generic: H
+              - generic: A
+        - generic [ref=f1e626]:
+          - generic:
+            - slider "Image navigation scrollbar" [ref=f1e632]
+            - generic:
+              - generic:
+                - generic:
+                  - generic "Study date": 14-Nov-2026
+                - generic:
+                  - generic "Series description": CT CHEST VOLUME
+              - generic:
+                - generic:
+                  - generic "Instance Number": 129/256
+              - generic:
+                - generic:
+                  - generic "Window Level":
+                    - generic: "W:"
+                    - generic: "2500"
+                    - generic: "L:"
+                    - generic: "480"
+            - generic:
+              - generic: H
+              - generic: R
+      - separator [ref=f1e348]
+      - generic [ref=f1e350]:
+        - generic [ref=f1e351] [cursor=pointer]
+        - generic [ref=f1e355]:
+          - button [ref=f1e356] [cursor=pointer]
+          - button [ref=f1e366] [cursor=pointer]

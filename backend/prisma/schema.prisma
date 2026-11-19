@@ -1,0 +1,833 @@
+// RIS + PACS Replica — PostgreSQL schema (RIS database).
+// Orthanc manages its own separate DB; this schema never touches image pixels,
+// only DICOM identifiers + references. UUID PKs throughout.
+
+generator client {
+  provider      = "prisma-client-js"
+  // linux-musl-openssl-3.0.x: existing Alpine dev/compose image (unchanged).
+  // debian-openssl-3.0.x: added for the all-in-one image's Debian-based final
+  // stage (Product Validation — all-in-one packaging). Additive only; "native"
+  // still resolves correctly for whichever platform actually runs `generate`.
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────── Org structure ───────────────────────────
+
+model Organization {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  name        String
+  address     String?
+  contact     String?
+  logoRef     String?
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  departments Department[]
+  users       User[]
+  doctors     Doctor[]
+  modalities  ModalityDevice[]
+  patients    Patient[]
+  studies     Study[]
+  orders      ScheduledOrder[]
+  pacsDestinations PacsDestination[]
+
+  @@map("organizations")
+}
+
+model Department {
+  id             String   @id @default(uuid())
+  organizationId String
+  code           String
+  name           String
+  jobType        String?
+  active         Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  users          User[]
+  doctors        Doctor[]
+
+  @@unique([organizationId, code])
+  @@index([organizationId])
+  @@map("departments")
+}
+
+// ─────────────────────────── AuthN / AuthZ ───────────────────────────
+
+model User {
+  id             String   @id @default(uuid())
+  username       String   @unique
+  fullName       String
+  email          String   @unique
+  mobile         String?
+  employeeId     String?
+  designation    String?
+  passwordHash   String
+  active         Boolean  @default(true)
+  failedLogins   Int      @default(0)
+  lockedUntil    DateTime?
+  lastLoginAt    DateTime?
+  organizationId String?
+  departmentId   String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  department     Department?   @relation(fields: [departmentId], references: [id])
+  roles          UserRole[]
+  reports        Report[]       @relation("ReportAuthor")
+  signatures     ReportSignature[]
+  macros         ReportMacro[]  @relation("MacroOwner")
+  assignments    StudyAssignment[]
+  auditLogs      AuditLog[]
+  notifications  Notification[]
+
+  @@index([organizationId])
+  @@map("users")
+}
+
+model Role {
+  id          String   @id @default(uuid())
+  key         String   @unique   // e.g. super_admin, radiologist
+  name        String
+  description String?
+  system      Boolean  @default(false) // built-in, not deletable
+
+  users       UserRole[]
+  permissions RolePermission[]
+
+  @@map("roles")
+}
+
+model Permission {
+  id          String   @id @default(uuid())
+  key         String   @unique   // e.g. report.sign, study.delete
+  description String?
+
+  roles       RolePermission[]
+
+  @@map("permissions")
+}
+
+model UserRole {
+  userId String
+  roleId String
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role   Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+  @@map("user_roles")
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+// ─────────────────────────── People ───────────────────────────
+
+model Doctor {
+  id             String   @id @default(uuid())
+  organizationId String?
+  departmentId   String?
+  name           String
+  qualification  String?
+  specialization String?
+  registrationNo String?
+  contact        String?
+  canReport      Boolean  @default(false)
+  active         Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  department     Department?   @relation(fields: [departmentId], references: [id])
+  referredStudies Study[]      @relation("ReferringDoctor")
+  referredOrders  ScheduledOrder[] @relation("OrderReferringDoctor")
+  referredPatients Patient[]   @relation("PatientReferringDoctor")
+
+  @@index([organizationId])
+  @@index([name])
+  @@map("doctors")
+}
+
+model Patient {
+  id               String   @id @default(uuid())
+  mrn              String   // hospital Patient ID, e.g. GG00247655
+  dicomPatientId   String?  // DICOM (0010,0020)
+  name             String
+  dob              DateTime?
+  gender           String?
+  contact          String?  // legacy mobile
+  mobile           String?
+  email            String?
+  address          String?
+  referringDoctorId String?
+  organizationId   String?
+  departmentId     String?
+  status           String   @default("ACTIVE") // ACTIVE, INACTIVE, MERGED
+  registrationDate DateTime @default(now())
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  mergedIntoId     String?  // duplicate-merge audit pointer
+
+  organization     Organization? @relation(fields: [organizationId], references: [id])
+  referringDoctor  Doctor?       @relation("PatientReferringDoctor", fields: [referringDoctorId], references: [id])
+  studies          Study[]
+  orders           ScheduledOrder[]
+
+  @@unique([organizationId, mrn])
+  @@index([mrn])
+  @@index([name])
+  @@index([status])
+  @@index([organizationId, registrationDate])
+  @@map("patients")
+}
+
+// ─────────────────────────── Modalities ───────────────────────────
+
+model ModalityDevice {
+  id             String   @id @default(uuid())
+  organizationId String?
+  departmentId   String?
+  name           String
+  aeTitle        String
+  host           String
+  port           Int
+  modalityType   String   // CT, MR, CR, DX, US, MG, NM, PT, XA ...
+  active         Boolean  @default(true)
+  lastSuccessAt  DateTime?
+  lastFailureAt  DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  receptionLogs  DicomReceptionLog[]
+
+  @@index([aeTitle])
+  @@map("modality_devices")
+}
+
+// One row per MWL C-FIND query received by the MWL SCP.
+model MwlQueryLog {
+  id            String   @id @default(uuid())
+  callingAet    String?
+  calledAet     String?
+  remoteHost    String?
+  status        String   // SUCCESS, NO_MATCH, REJECTED, FAILED
+  matchCount    Int      @default(0)
+  filters       Json?    // the query keys received
+  message       String?
+  createdAt     DateTime @default(now())
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([callingAet])
+  @@map("mwl_query_logs")
+}
+
+// One row per DICOM reception event (study ingest attempt).
+model DicomReceptionLog {
+  id               String   @id @default(uuid())
+  orthancStudyId   String?
+  studyInstanceUid String?
+  accessionNumber  String?
+  callingAet       String?  // modality AE that sent it
+  modality         String?
+  modalityDeviceId String?
+  status           String   // RECEIVED, INGESTED, MATCHED, ORPHAN, DUPLICATE, FAILED
+  seriesCount      Int      @default(0)
+  instanceCount    Int      @default(0)
+  message          String?
+  createdAt        DateTime @default(now())
+
+  modalityDevice   ModalityDevice? @relation(fields: [modalityDeviceId], references: [id])
+
+  @@index([status])
+  @@index([studyInstanceUid])
+  @@index([createdAt])
+  @@map("dicom_reception_logs")
+}
+
+// ─────────────────────────── Orders / MWL ───────────────────────────
+
+model ScheduledOrder {
+  id                 String   @id @default(uuid())
+  organizationId     String?
+  departmentId       String?
+  patientId          String
+  accessionNumber    String   @unique
+  modalityType       String
+  procedureDesc      String
+  studyDescription   String?
+  clinicalHistory    String?
+  priority           String   @default("ROUTINE") // ROUTINE, URGENT, STAT
+  referringDoctorId  String?
+  assignedUserId     String?  // assigned radiologist
+  scheduledAt        DateTime
+  status             String   @default("SCHEDULED") // SCHEDULED, ARRIVED, COMPLETED, CANCELLED
+  studyInstanceUid   String?  // filled when imaging arrives
+  studyId            String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  organization       Organization? @relation(fields: [organizationId], references: [id])
+  patient            Patient       @relation(fields: [patientId], references: [id])
+  referringDoctor    Doctor?       @relation("OrderReferringDoctor", fields: [referringDoctorId], references: [id])
+
+  @@index([accessionNumber])
+  @@index([scheduledAt])
+  @@index([status])
+  @@index([organizationId, scheduledAt])
+  @@map("scheduled_orders")
+}
+
+// ─────────────────────────── DICOM hierarchy (metadata only) ──────────
+
+model Study {
+  id                 String   @id @default(uuid())
+  organizationId     String?
+  patientId          String?
+  orthancStudyId     String?  @unique       // Orthanc's internal id
+  studyInstanceUid   String   @unique       // DICOM (0020,000D)
+  accessionNumber    String?
+  studyDate          DateTime?
+  description        String?
+  modality           String?                // primary modality
+  referringDoctorId  String?
+  assignedUserId     String?                // reading radiologist (denormalised for worklist speed)
+  reportStatus       String   @default("READY") // READY, DRAFT, PRELIMINARY, FINAL, CANCELLED
+  imageCount         Int      @default(0)
+  studyTime          String?                 // DICOM (0008,0030)
+  isOrphan           Boolean  @default(false) // arrived without a matching patient/order
+  isReconciled       Boolean  @default(true)  // false when needs manual reconciliation
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  // full-text search vector maintained by a trigger/raw SQL migration (0002).
+  searchText         String?
+  // Declared so `prisma migrate diff` stops trying to drop it. Managed by trigger, not Prisma.
+  search_tsv         Unsupported("tsvector")?
+
+  organization       Organization? @relation(fields: [organizationId], references: [id])
+  patient            Patient?      @relation(fields: [patientId], references: [id])
+  referringDoctor    Doctor?       @relation("ReferringDoctor", fields: [referringDoctorId], references: [id])
+  series             Series[]
+  reports            Report[]
+  assignments        StudyAssignment[]
+
+  @@index([studyInstanceUid])
+  @@index([accessionNumber])
+  @@index([studyDate])
+  @@index([reportStatus])
+  @@index([modality])
+  @@index([organizationId, studyDate])
+  // GIN index on the tsvector, created in migration 0002; declared here so diffs keep it.
+  @@index([search_tsv], type: Gin)
+  @@map("studies")
+}
+
+model Series {
+  id                String   @id @default(uuid())
+  studyId           String
+  seriesInstanceUid String   @unique  // DICOM (0020,000E)
+  seriesNumber      Int?
+  modality          String?
+  description       String?
+  instanceCount     Int      @default(0)
+  createdAt         DateTime @default(now())
+
+  study     Study     @relation(fields: [studyId], references: [id], onDelete: Cascade)
+  instances Instance[]
+
+  @@index([studyId])
+  @@map("series")
+}
+
+model Instance {
+  id             String   @id @default(uuid())
+  seriesId       String
+  sopInstanceUid String   @unique  // DICOM (0008,0018)
+  instanceNumber Int?
+  orthancId      String?
+  createdAt      DateTime @default(now())
+
+  series   Series @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+
+  @@index([seriesId])
+  @@map("instances")
+}
+
+model StudyAssignment {
+  id         String   @id @default(uuid())
+  studyId    String
+  userId     String
+  assignedAt DateTime @default(now())
+  assignedBy String?
+
+  study Study @relation(fields: [studyId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id])
+
+  @@unique([studyId, userId])
+  @@map("study_assignments")
+}
+
+// ─────────────────────────── Reporting ───────────────────────────
+
+model ReportTemplate {
+  id           String   @id @default(uuid())
+  name         String
+  code         String?                // short template code (Phase 7)
+  modalityType String?
+  departmentId String?
+  organizationId String?              // org scoping (Phase 7); null = global template
+  technique    String?                // default technique text (Phase 7)
+  bodyFindings String?
+  bodyImpression String?
+  bodyRecommendations String?         // default recommendations (Phase 7)
+  defaultText  String?
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  reports      Report[]
+
+  @@index([organizationId])
+  @@index([modalityType])
+  @@map("report_templates")
+}
+
+model Report {
+  id               String   @id @default(uuid())
+  studyId          String
+  templateId       String?
+  authorUserId     String?
+  organizationId   String?                // denormalized for org isolation (Phase 7)
+  status           String   @default("DRAFT") // DRAFT, PRELIMINARY, FINAL, CANCELLED, ADDENDUM
+  reportType       String   @default("MAIN")  // MAIN | ADDENDUM (Phase 7)
+  parentReportId   String?                // addendum -> original report (Phase 7)
+  clinicalHistory  String?
+  technique        String?
+  comparison       String?                // "Comparison" section (Phase 7)
+  findings         String?
+  impression       String?
+  recommendations  String?
+  version          Int      @default(1)   // current content version number (Phase 7)
+  locked           Boolean  @default(false)
+  preliminaryAt    DateTime?              // server time submitted preliminary
+  finalizedAt      DateTime?              // server time finalized
+  signedAt         DateTime?              // server time signed (locks the report)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  study     Study           @relation(fields: [studyId], references: [id])
+  template  ReportTemplate? @relation(fields: [templateId], references: [id])
+  author    User?           @relation("ReportAuthor", fields: [authorUserId], references: [id])
+  parent    Report?         @relation("ReportAddendum", fields: [parentReportId], references: [id])
+  addenda   Report[]        @relation("ReportAddendum")
+  versions  ReportVersion[]
+  signatures ReportSignature[]
+
+  @@index([studyId])
+  @@index([status])
+  @@index([organizationId])
+  @@index([parentReportId])
+  @@map("reports")
+}
+
+model ReportVersion {
+  id        String   @id @default(uuid())
+  reportId  String
+  version   Int
+  status    String
+  snapshot  Json     // full report content at this version
+  reason    String?  // reason for this change (Phase 7)
+  createdAt DateTime @default(now())
+  createdBy String?
+
+  report Report @relation(fields: [reportId], references: [id], onDelete: Cascade)
+
+  @@unique([reportId, version])
+  @@index([reportId])
+  @@map("report_versions")
+}
+
+model ReportSignature {
+  id        String   @id @default(uuid())
+  reportId  String
+  userId    String
+  signedAt  DateTime @default(now())
+  signatureHash String  // SHA-256 over report content + signer + server time + version
+  reportVersion Int?                   // report content version signed (Phase 7)
+  method    String   @default("ELECTRONIC_APPROVAL") // authenticated electronic approval (NOT legal e-sig)
+  verification String?                 // human-readable verification string (Phase 7)
+  kind      String   @default("FINAL") // PRELIMINARY, FINAL, ADDENDUM
+
+  report Report @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@index([reportId])
+  @@map("report_signatures")
+}
+
+// Reusable reporting macros (Phase 7, Module 9). Personal or dept/org scoped.
+model ReportMacro {
+  id             String   @id @default(uuid())
+  name           String
+  ownerUserId    String?                // personal macro (null = shared)
+  organizationId String?
+  departmentId   String?
+  modalityType   String?
+  findings       String?
+  impression     String?
+  recommendations String?
+  active         Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  owner User? @relation("MacroOwner", fields: [ownerUserId], references: [id])
+
+  @@index([ownerUserId])
+  @@index([organizationId])
+  @@map("report_macros")
+}
+
+// ─────────────────────────── Audit / Notifications / Settings ─────────
+
+model AuditLog {
+  id             String   @id @default(uuid())
+  userId         String?
+  username       String?  // denormalized at write time (survives user rename/delete) — Phase 8
+  organizationId String?  // for org-scoped audit viewing — Phase 8
+  action         String   // LOGIN, LOGIN_FAILED, STUDY_VIEW, REPORT_SIGN, ...
+  status         String   @default("SUCCESS") // SUCCESS | FAILURE — Phase 8
+  entityType     String?
+  entityId       String?
+  detail         Json?
+  ip             String?
+  createdAt      DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+  @@index([entityType, entityId])
+  @@index([organizationId, createdAt])
+  @@index([status])
+  @@map("audit_logs")
+}
+
+model Notification {
+  id             String   @id @default(uuid())
+  // Recipient: a specific user, or a role (role-based fan-out) within an org.
+  userId         String?
+  roleKey        String?  // role-based notification (e.g. all radiologists in the org)
+  organizationId String?  // org scoping — Phase 8
+  type           String?  // legacy Phase-1 column, retained (never dropped); mirrors category
+  category       String   @default("SYSTEM") // NEW_STUDY, STUDY_MATCHED, ORPHAN_STUDY, RECONCILIATION, REPORT_PRELIMINARY, REPORT_FINAL, REPORT_SIGNED, REPORT_ADDENDUM, EXAM_ASSIGNED, EXAM_CANCELLED, MODALITY_FAILURE, DICOM_FAILURE, MWL_ISSUE, SYSTEM_ALERT
+  priority       String   @default("NORMAL")  // LOW | NORMAL | HIGH | CRITICAL
+  title          String
+  body           String?
+  link           String?  // in-app route to the relevant page
+  // optional related entity references
+  patientId      String?
+  orderId        String?
+  studyId        String?
+  reportId       String?
+  read           Boolean  @default(false)
+  readAt         DateTime?
+  archived       Boolean  @default(false)
+  dedupKey       String?  // idempotency: unique per (recipient,event); prevents duplicates
+  expiresAt      DateTime?
+  createdAt      DateTime @default(now())
+
+  user          User?              @relation(fields: [userId], references: [id])
+  deliveries    NotificationDeliveryAttempt[]
+
+  @@unique([dedupKey])
+  @@index([userId, read])
+  @@index([organizationId, createdAt])
+  @@index([roleKey])
+  @@index([category])
+  @@index([priority])
+  @@index([archived])
+  @@map("notifications")
+}
+
+// Records attempts to deliver a notification (e.g. via socket/email) for
+// investigation; a failed delivery never blocks the clinical workflow. Phase 8.
+model NotificationDeliveryAttempt {
+  id             String   @id @default(uuid())
+  notificationId String
+  channel        String   // IN_APP | SOCKET | EMAIL
+  status         String   // PENDING | DELIVERED | FAILED
+  error          String?
+  attemptedAt    DateTime @default(now())
+
+  notification Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+
+  @@index([notificationId])
+  @@index([status])
+  @@map("notification_delivery_attempts")
+}
+
+// System alerts (infrastructure / operational) with an acknowledge→resolve
+// lifecycle and auto-recovery after N consecutive healthy checks. Phase 8.
+model SystemAlert {
+  id             String   @id @default(uuid())
+  organizationId String?  // null = global/system-wide alert
+  alertKey       String   // stable key for dedup (e.g. "service:orthanc:down")
+  level          String   @default("WARNING") // INFO | WARNING | HIGH | CRITICAL
+  status         String   @default("OPEN")    // OPEN | ACKNOWLEDGED | RESOLVED
+  title          String
+  detail         String?
+  source         String?  // e.g. HEALTHCHECK, DICOM, MWL, THRESHOLD
+  firstSeenAt    DateTime @default(now())
+  lastSeenAt     DateTime @default(now())
+  occurrences    Int      @default(1)
+  acknowledgedAt DateTime?
+  acknowledgedBy String?
+  resolvedAt     DateTime?
+  resolvedBy     String?  // userId, or "SYSTEM" for auto-recovery
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Only one non-resolved alert per key at a time (dedup).
+  @@index([alertKey])
+  @@index([status])
+  @@index([level])
+  @@index([organizationId])
+  @@map("system_alerts")
+}
+
+// Point-in-time service health check results. Phase 8.
+model ServiceHealthCheck {
+  id           String   @id @default(uuid())
+  service      String   // backend | postgres | redis | orthanc | dicom-cstore | mwl-scp | ohif | nginx
+  status       String   // HEALTHY | DEGRADED | DOWN | UNKNOWN
+  responseMs   Int?
+  detail       String?
+  checkedAt    DateTime @default(now())
+
+  @@index([service, checkedAt])
+  @@index([checkedAt])
+  @@map("service_health_checks")
+}
+
+// Background job execution records (status/attempts/retry). Phase 8.
+model BackgroundJobRecord {
+  id          String   @id @default(uuid())
+  jobType     String   // HEALTHCHECK | ALERT_EVAL | METRIC_AGG | NOTIF_CLEANUP | NOTIF_DELIVERY
+  status      String   @default("PENDING") // PENDING | RUNNING | SUCCESS | FAILED
+  attempts    Int      @default(0)
+  dedupKey    String?  // optional idempotency key
+  error       String?
+  startedAt   DateTime?
+  completedAt DateTime?
+  createdAt   DateTime @default(now())
+
+  @@index([jobType, createdAt])
+  @@index([status])
+  @@map("background_job_records")
+}
+
+model SystemSetting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+
+  @@map("system_settings")
+}
+
+// ─────────────── PACS Operations — DICOM Reverse Push (Module 1) ───────────────
+
+// A remote destination PACS that studies can be pushed to via C-STORE.
+// Admin-configured only (allow-list); SSRF protection = no arbitrary runtime hosts.
+model PacsDestination {
+  id                 String   @id @default(uuid())
+  organizationId     String?
+  name               String
+  aeTitle            String   // destination AE title
+  host               String   // destination IP/hostname
+  port               Int      // destination DICOM port
+  callingAet         String   @default("GGHPACS") // our calling AE title
+  connectionTimeout  Int      @default(10)  // seconds
+  associationTimeout Int      @default(30)  // seconds
+  maxConcurrent      Int      @default(1)   // max concurrent transfers to this dest
+  active             Boolean  @default(true)
+  description        String?
+  lastTestAt         DateTime?
+  lastTestStatus     String?  // SUCCESS | FAILED
+  lastTestDetail     String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  organization Organization? @relation(fields: [organizationId], references: [id])
+  jobs         DicomTransferJob[]
+
+  @@index([organizationId])
+  @@index([aeTitle])
+  @@map("pacs_destinations")
+}
+
+// A reverse-push job: transfer one study to one destination PACS.
+model DicomTransferJob {
+  id                 String   @id @default(uuid())
+  organizationId     String?
+  destinationId      String
+  studyId            String?  // RIS Study row (if known)
+  studyInstanceUid   String   // DICOM StudyInstanceUID (authoritative)
+  orthancStudyId     String?  // Orthanc internal study id (source)
+  status             String   @default("PENDING") // PENDING|QUEUED|RUNNING|COMPLETED|PARTIALLY_COMPLETED|FAILED|CANCELLED
+  totalInstances     Int      @default(0)
+  successInstances   Int      @default(0)
+  failedInstances    Int      @default(0)
+  pendingInstances   Int      @default(0)
+  retryCount         Int      @default(0)
+  lastError          String?
+  orthancJobId       String?  // Orthanc async job id for the store operation
+  transferSpeedKbps  Float?   // computed on completion
+  startedAt          DateTime?
+  completedAt        DateTime?
+  pausedAt           DateTime?
+  cancelRequested    Boolean  @default(false)
+  dedupKey           String?  @unique // idempotency: destination+study+active -> no duplicate running job
+  createdBy          String?  // userId
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  destination PacsDestination        @relation(fields: [destinationId], references: [id])
+  instances   DicomTransferInstance[]
+
+  @@index([organizationId, createdAt])
+  @@index([status])
+  @@index([destinationId])
+  @@index([studyInstanceUid])
+  @@map("dicom_transfer_jobs")
+}
+
+// Per-instance transfer status within a job (instance-level success/failure).
+model DicomTransferInstance {
+  id                String   @id @default(uuid())
+  jobId             String
+  sopInstanceUid    String
+  orthancInstanceId String?
+  status            String   @default("PENDING") // PENDING | SUCCESS | FAILED
+  error             String?
+  sentAt            DateTime?
+
+  job DicomTransferJob @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@index([jobId])
+  @@index([status])
+  @@unique([jobId, sopInstanceUid]) // idempotency: one row per instance per job
+  @@map("dicom_transfer_instances")
+}
+
+// ─────────────── PACS Operations — Archive Compression (Module 2) ───────────────
+
+// A study-archival job: pull the study's DICOM as Orthanc's native (lossless) ZIP,
+// gzip-wrap it at a configurable level, checksum it, and store it on the archive
+// volume. COPY-ONLY: original Orthanc instances/files are never deleted or modified.
+model ArchiveJob {
+  id                String   @id @default(uuid())
+  organizationId    String?
+  studyId           String?  // RIS Study row (if known)
+  studyInstanceUid  String   // DICOM StudyInstanceUID (authoritative)
+  orthancStudyId    String?  // Orthanc internal study id (source)
+  status            String   @default("PENDING") // PENDING|QUEUED|RUNNING|COMPLETED|VERIFIED|FAILED|CANCELLED
+  compressionLevel  Int      @default(6)  // gzip level 0-9
+  workerCount       Int      @default(2)  // worker threads used (informational)
+  originalBytes     BigInt?  // size of the Orthanc study ZIP (pre-gzip)
+  compressedBytes   BigInt?  // size of the final .zip.gz archive
+  compressionRatio  Float?   // compressedBytes / originalBytes
+  savingsPercent    Float?   // (1 - ratio) * 100
+  instanceCount     Int      @default(0)
+  sha256            String?  // checksum of the final archive file
+  archivePath       String?  // path on the archive volume (relative)
+  verified          Boolean  @default(false) // integrity verified (re-hash + extract)
+  verifyDetail      String?
+  cancelRequested   Boolean  @default(false)
+  error             String?
+  startedAt         DateTime?
+  completedAt       DateTime?
+  verifiedAt        DateTime?
+  dedupKey          String?  @unique // idempotency per creation
+  createdBy         String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([organizationId, createdAt])
+  @@index([status])
+  @@index([studyInstanceUid])
+  @@map("archive_jobs")
+}
+
+// ─────────────── PACS Operations — Storage Management (Module 3) ───────────────
+
+// A point-in-time snapshot of real storage measurements, used for the dashboard
+// (latest row), growth tracking, and forecasting. All values are measured from
+// Orthanc, the archive volume and the host filesystem — never estimated/mock.
+model StorageSnapshot {
+  id               String   @id @default(uuid())
+  capturedAt       DateTime @default(now())
+  // Orthanc
+  orthancBytes     BigInt   @default(0)
+  patients         Int      @default(0)
+  studies          Int      @default(0)
+  series           Int      @default(0)
+  instances        Int      @default(0)
+  // Archive volume
+  archiveBytes     BigInt   @default(0)
+  // Host filesystem (disk the archive/pg live on)
+  diskTotalBytes   BigInt   @default(0)
+  diskUsedBytes    BigInt   @default(0)
+  diskAvailBytes   BigInt   @default(0)
+  // Per-modality { modality: { count, bytes } } (real per-study DiskSize summed)
+  modalityBreakdown Json?
+
+  @@index([capturedAt])
+  @@map("storage_snapshots")
+}
+
+// ─────────────── Backup & DR (Product Validation Phase 1D) ───────────────
+
+// One row per backup component attempted in a nightly run (ris db / orthanc db /
+// orthanc dicom storage), so status, duration and file size are reported per
+// component rather than only for the run as a whole. Mirrors ArchiveJob's shape
+// (status/bytes/sha256/verified/timestamps) — same conventions, new table since
+// this tracks a different lifecycle (nightly, retained, no study linkage).
+model BackupRun {
+  id              String    @id @default(uuid())
+  runId           String    // groups the 3 component rows of one nightly run
+  component       String    // RIS_DB | ORTHANC_DB | DICOM_STORAGE
+  status          String    @default("RUNNING") // RUNNING|SUCCESS|FAILED|SKIPPED
+  filePath        String?   // path on the backup volume (relative)
+  bytes           BigInt?
+  sha256          String?
+  verified        Boolean   @default(false) // integrity verified (checksum + readability check)
+  verifyDetail    String?
+  error           String?
+  startedAt       DateTime  @default(now())
+  completedAt     DateTime?
+  durationMs      Int?
+  createdAt       DateTime  @default(now())
+
+  @@index([runId])
+  @@index([component, createdAt])
+  @@index([status])
+  @@map("backup_runs")
+}

@@ -1,0 +1,133 @@
+- generic [ref=f1e3]:
+  - complementary [ref=f1e4]:
+    - generic [ref=f1e5]:
+      - generic [ref=f1e6]: 🩻 RIS·PACS
+      - generic [ref=f1e7]: Enterprise Edition
+    - navigation [ref=f1e8]:
+      - generic [ref=f1e9]:
+        - generic [ref=f1e10]: Overview
+        - link "Dashboard" [ref=f1e11] [cursor=pointer]:
+          - /url: /
+      - generic [ref=f1e12]:
+        - generic [ref=f1e13]: Radiology
+        - link "Worklist" [ref=f1e14] [cursor=pointer]:
+          - /url: /worklist
+        - link "Patients" [ref=f1e15] [cursor=pointer]:
+          - /url: /patients
+        - link "Examination Orders" [ref=f1e16] [cursor=pointer]:
+          - /url: /orders
+      - generic [ref=f1e17]:
+        - generic [ref=f1e18]: PACS
+        - link "PACS Monitoring" [ref=f1e19] [cursor=pointer]:
+          - /url: /pacs/monitor
+        - link "Reception Logs" [ref=f1e20] [cursor=pointer]:
+          - /url: /pacs/reception-logs
+        - link "Reconciliation" [ref=f1e21] [cursor=pointer]:
+          - /url: /pacs/reconciliation
+        - link "Modality Worklist" [ref=f1e22] [cursor=pointer]:
+          - /url: /pacs/mwl
+      - generic [ref=f1e23]:
+        - generic [ref=f1e24]: Reporting
+        - link "Reporting Worklist" [ref=f1e25] [cursor=pointer]:
+          - /url: /reporting
+      - generic [ref=f1e26]:
+        - generic [ref=f1e27]: Administration
+        - link "Organizations" [ref=f1e28] [cursor=pointer]:
+          - /url: /admin/organizations
+        - link "Departments" [ref=f1e29] [cursor=pointer]:
+          - /url: /admin/departments
+        - link "Doctors" [ref=f1e30] [cursor=pointer]:
+          - /url: /admin/doctors
+        - link "Users" [ref=f1e31] [cursor=pointer]:
+          - /url: /admin/users
+        - link "Modalities" [ref=f1e32] [cursor=pointer]:
+          - /url: /admin/modalities
+        - link "Report Templates" [ref=f1e33] [cursor=pointer]:
+          - /url: /admin/report-templates
+  - banner [ref=f1e34]:
+    - strong [ref=f1e35]: Administration
+    - generic [ref=f1e36]:
+      - button "🌙" [ref=f1e37] [cursor=pointer]
+      - generic [ref=f1e38]: rad_ggh
+      - button "Logout" [ref=f1e39] [cursor=pointer]
+  - main [ref=f1e40]:
+    - generic [ref=f1e41]:
+      - generic [ref=f1e42]:
+        - heading "Reporting Worklist" [level=1] [ref=f1e43]
+        - generic [ref=f1e44]:
+          - checkbox "My Assignment" [ref=f1e45]
+          - text: My Assignment
+      - generic [ref=f1e46]:
+        - generic [ref=f1e47]:
+          - generic [ref=f1e48]:
+            - generic [ref=f1e49]: Patient ID
+            - textbox [ref=f1e50]
+          - generic [ref=f1e51]:
+            - generic [ref=f1e52]: Patient Name
+            - textbox [ref=f1e53]
+          - generic [ref=f1e54]:
+            - generic [ref=f1e55]: Accession No
+            - textbox [ref=f1e56]
+          - generic [ref=f1e57]:
+            - generic [ref=f1e58]: From / To
+            - generic [ref=f1e59]:
+              - textbox [ref=f1e60]
+              - textbox [ref=f1e61]
+        - generic [ref=f1e62]: Modality
+        - generic [ref=f1e63]:
+          - generic [ref=f1e64]:
+            - checkbox "CT" [ref=f1e65]
+            - text: CT
+          - generic [ref=f1e66]:
+            - checkbox "MR" [ref=f1e67]
+            - text: MR
+          - generic [ref=f1e68]:
+            - checkbox "CR" [ref=f1e69]
+            - text: CR
+          - generic [ref=f1e70]:
+            - checkbox "DX" [ref=f1e71]
+            - text: DX
+          - generic [ref=f1e72]:
+            - checkbox "US" [ref=f1e73]
+            - text: US
+          - generic [ref=f1e74]:
+            - checkbox "MG" [ref=f1e75]
+            - text: MG
+          - generic [ref=f1e76]:
+            - checkbox "NM" [ref=f1e77]
+            - text: NM
+          - generic [ref=f1e78]:
+            - checkbox "PT" [ref=f1e79]
+            - text: PT
+        - generic [ref=f1e80]:
+          - button "Search" [ref=f1e81] [cursor=pointer]
+          - button "Clear" [ref=f1e82] [cursor=pointer]
+      - generic [ref=f1e83]:
+        - button "ALL" [ref=f1e84] [cursor=pointer]
+        - button "UNREPORTED" [ref=f1e85] [cursor=pointer]
+        - button "DRAFT" [ref=f1e86] [cursor=pointer]
+        - button "PRELIMINARY" [ref=f1e87] [cursor=pointer]
+        - button "FINAL" [ref=f1e88] [cursor=pointer]
+        - button "ADDENDUM" [ref=f1e89] [cursor=pointer]
+      - generic [ref=f1e90]:
+        - table [ref=f1e91]:
+          - rowgroup [ref=f1e92]:
+            - row [ref=f1e93]:
+              - columnheader "Sl" [ref=f1e94] [cursor=pointer]
+              - columnheader "Patient ID" [ref=f1e95] [cursor=pointer]
+              - columnheader "Patient Name" [ref=f1e96] [cursor=pointer]
+              - columnheader "Accession" [ref=f1e97] [cursor=pointer]
+              - columnheader "Modality" [ref=f1e98] [cursor=pointer]
+              - columnheader "Description" [ref=f1e99] [cursor=pointer]
+              - columnheader "Study Date" [ref=f1e100] [cursor=pointer]
+              - columnheader "Assigned" [ref=f1e101] [cursor=pointer]
+              - columnheader "Report" [ref=f1e102] [cursor=pointer]
+              - columnheader "Images" [ref=f1e103] [cursor=pointer]
+              - columnheader "Actions" [ref=f1e104] [cursor=pointer]
+          - rowgroup [ref=f1e105]:
+            - row [ref=f1e106]:
+              - cell "Loading…" [ref=f1e107]
+        - generic [ref=f1e108]:
+          - generic [ref=f1e109]: 0 total · page 1/1
+          - button "Prev" [disabled] [ref=f1e110] [cursor=pointer]
+          - button "Next" [disabled] [ref=f1e111] [cursor=pointer]

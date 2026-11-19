@@ -1,0 +1,92 @@
+- generic [ref=f4e3]:
+  - complementary [ref=f4e4]:
+    - generic [ref=f4e5]:
+      - generic [ref=f4e6]: 🩻 RIS·PACS
+      - generic [ref=f4e7]: Enterprise Edition
+    - navigation [ref=f4e8]:
+      - generic [ref=f4e9]:
+        - generic [ref=f4e10]: Overview
+        - link "Dashboard" [ref=f4e11] [cursor=pointer]:
+          - /url: /
+      - generic [ref=f4e12]:
+        - generic [ref=f4e13]: Radiology
+        - link "Worklist" [ref=f4e14] [cursor=pointer]:
+          - /url: /worklist
+        - link "Patients" [ref=f4e15] [cursor=pointer]:
+          - /url: /patients
+        - link "Examination Orders" [ref=f4e16] [cursor=pointer]:
+          - /url: /orders
+      - generic [ref=f4e17]:
+        - generic [ref=f4e18]: PACS
+        - link "PACS Monitoring" [ref=f4e19] [cursor=pointer]:
+          - /url: /pacs/monitor
+        - link "Reception Logs" [ref=f4e20] [cursor=pointer]:
+          - /url: /pacs/reception-logs
+        - link "Reconciliation" [ref=f4e21] [cursor=pointer]:
+          - /url: /pacs/reconciliation
+        - link "Modality Worklist" [ref=f4e22] [cursor=pointer]:
+          - /url: /pacs/mwl
+      - generic [ref=f4e23]:
+        - generic [ref=f4e24]: PACS Operations
+        - link "Reverse Push Monitor" [ref=f4e25] [cursor=pointer]:
+          - /url: /pacs/reverse-push
+        - link "Archive Compression" [ref=f4e26] [cursor=pointer]:
+          - /url: /pacs/archive
+        - link "Storage Management" [ref=f4e27] [cursor=pointer]:
+          - /url: /pacs/storage
+        - link "Transfer & Archive History" [ref=f4e28] [cursor=pointer]:
+          - /url: /pacs/operations/history
+      - generic [ref=f4e29]:
+        - generic [ref=f4e30]: Reporting
+        - link "Reporting Worklist" [ref=f4e31] [cursor=pointer]:
+          - /url: /reporting
+      - generic [ref=f4e32]:
+        - generic [ref=f4e33]: Operations
+        - link "Notifications" [ref=f4e34] [cursor=pointer]:
+          - /url: /notifications
+        - link "System Monitoring" [ref=f4e35] [cursor=pointer]:
+          - /url: /ops/monitoring
+        - link "Alert Management" [ref=f4e36] [cursor=pointer]:
+          - /url: /ops/alerts
+        - link "Audit Logs" [ref=f4e37] [cursor=pointer]:
+          - /url: /ops/audit
+      - generic [ref=f4e38]:
+        - generic [ref=f4e39]: Administration
+        - link "Organizations" [ref=f4e40] [cursor=pointer]:
+          - /url: /admin/organizations
+        - link "Departments" [ref=f4e41] [cursor=pointer]:
+          - /url: /admin/departments
+        - link "Doctors" [ref=f4e42] [cursor=pointer]:
+          - /url: /admin/doctors
+        - link "Users" [ref=f4e43] [cursor=pointer]:
+          - /url: /admin/users
+        - link "Modalities" [ref=f4e44] [cursor=pointer]:
+          - /url: /admin/modalities
+        - link "Report Templates" [ref=f4e45] [cursor=pointer]:
+          - /url: /admin/report-templates
+  - banner [ref=f4e46]:
+    - strong [ref=f4e47]: Administration
+    - generic [ref=f4e48]:
+      - button "Notifications" [ref=f4e50] [cursor=pointer]: 🔔
+      - button "🌙" [ref=f4e51] [cursor=pointer]
+      - generic [ref=f4e52]: admin (super admin)
+      - button "Logout" [ref=f4e53] [cursor=pointer]
+  - main [ref=f4e54]:
+    - generic [ref=f4e55]:
+      - generic [ref=f4e56]:
+        - heading "Transfer & Archive History" [level=1] [ref=f4e57]
+        - generic [ref=f4e58]:
+          - button "Export CSV" [ref=f4e59] [cursor=pointer]
+          - button "Refresh" [ref=f4e60] [cursor=pointer]
+      - generic [ref=f4e61]:
+        - button "DASHBOARD" [ref=f4e62] [cursor=pointer]
+        - button "UNIFIED" [ref=f4e63] [cursor=pointer]
+        - button "REVERSE PUSH" [ref=f4e64] [cursor=pointer]
+        - button "ARCHIVE" [ref=f4e65] [cursor=pointer]
+        - generic [ref=f4e66]: Real records from reverse-push + archive
+      - generic [ref=f4e67]:
+        - button "Today" [ref=f4e68] [cursor=pointer]
+        - button "Last 7 days" [ref=f4e69] [cursor=pointer]
+        - button "Last 30 days" [ref=f4e70] [cursor=pointer]
+        - button "All" [ref=f4e71] [cursor=pointer]
+        - button "Custom" [ref=f4e72] [cursor=pointer]

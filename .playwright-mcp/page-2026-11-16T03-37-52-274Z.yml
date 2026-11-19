@@ -1,0 +1,589 @@
+- generic [ref=f8e3]:
+  - complementary [ref=f8e4]:
+    - generic [ref=f8e5]:
+      - generic [ref=f8e6]: 🩻 RIS·PACS
+      - generic [ref=f8e7]: Enterprise Edition
+    - navigation [ref=f8e8]:
+      - generic [ref=f8e9]:
+        - generic [ref=f8e10]: Overview
+        - link "Dashboard" [ref=f8e11] [cursor=pointer]:
+          - /url: /
+      - generic [ref=f8e12]:
+        - generic [ref=f8e13]: Radiology
+        - link "Worklist" [ref=f8e14] [cursor=pointer]:
+          - /url: /worklist
+        - link "Patients" [ref=f8e15] [cursor=pointer]:
+          - /url: /patients
+        - link "Examination Orders" [ref=f8e16] [cursor=pointer]:
+          - /url: /orders
+      - generic [ref=f8e17]:
+        - generic [ref=f8e18]: PACS
+        - link "PACS Monitoring" [ref=f8e19] [cursor=pointer]:
+          - /url: /pacs/monitor
+        - link "Reception Logs" [ref=f8e20] [cursor=pointer]:
+          - /url: /pacs/reception-logs
+        - link "Reconciliation" [ref=f8e21] [cursor=pointer]:
+          - /url: /pacs/reconciliation
+        - link "Modality Worklist" [ref=f8e22] [cursor=pointer]:
+          - /url: /pacs/mwl
+      - generic [ref=f8e23]:
+        - generic [ref=f8e24]: PACS Operations
+        - link "Command Centre" [ref=f8e25] [cursor=pointer]:
+          - /url: /pacs/operations/command-centre
+        - link "Exceptions Console" [ref=f8e26] [cursor=pointer]:
+          - /url: /pacs/operations/exceptions
+        - link "Reverse Push Monitor" [ref=f8e27] [cursor=pointer]:
+          - /url: /pacs/reverse-push
+        - link "Archive Compression" [ref=f8e28] [cursor=pointer]:
+          - /url: /pacs/archive
+        - link "Storage Management" [ref=f8e29] [cursor=pointer]:
+          - /url: /pacs/storage
+        - link "Transfer & Archive History" [ref=f8e30] [cursor=pointer]:
+          - /url: /pacs/operations/history
+      - generic [ref=f8e31]:
+        - generic [ref=f8e32]: Reporting
+        - link "Reporting Worklist" [ref=f8e33] [cursor=pointer]:
+          - /url: /reporting
+      - generic [ref=f8e34]:
+        - generic [ref=f8e35]: Operations
+        - link "Notifications" [ref=f8e36] [cursor=pointer]:
+          - /url: /notifications
+        - link "System Monitoring" [ref=f8e37] [cursor=pointer]:
+          - /url: /ops/monitoring
+        - link "Alert Management" [ref=f8e38] [cursor=pointer]:
+          - /url: /ops/alerts
+        - link "Audit Logs" [ref=f8e39] [cursor=pointer]:
+          - /url: /ops/audit
+      - generic [ref=f8e40]:
+        - generic [ref=f8e41]: Administration
+        - link "Organizations" [ref=f8e42] [cursor=pointer]:
+          - /url: /admin/organizations
+        - link "Departments" [ref=f8e43] [cursor=pointer]:
+          - /url: /admin/departments
+        - link "Doctors" [ref=f8e44] [cursor=pointer]:
+          - /url: /admin/doctors
+        - link "Users" [ref=f8e45] [cursor=pointer]:
+          - /url: /admin/users
+        - link "Modalities" [ref=f8e46] [cursor=pointer]:
+          - /url: /admin/modalities
+        - link "Report Templates" [ref=f8e47] [cursor=pointer]:
+          - /url: /admin/report-templates
+  - banner [ref=f8e48]:
+    - strong [ref=f8e49]: Administration
+    - generic [ref=f8e50]:
+      - button "Notifications" [ref=f8e52] [cursor=pointer]: 🔔
+      - button "🌙" [ref=f8e53] [cursor=pointer]
+      - generic [ref=f8e54]: admin (super admin)
+      - button "Logout" [ref=f8e55] [cursor=pointer]
+  - main [ref=f8e56]:
+    - generic [ref=f8e57]:
+      - generic [ref=f8e58]:
+        - heading "RIS Worklist" [level=1] [ref=f8e59]
+        - generic [ref=f8e60]:
+          - checkbox "My Assignment" [ref=f8e61]
+          - text: My Assignment
+      - generic [ref=f8e62]:
+        - generic [ref=f8e63]:
+          - generic [ref=f8e64]:
+            - generic [ref=f8e65]: Patient ID
+            - textbox [ref=f8e66]
+          - generic [ref=f8e67]:
+            - generic [ref=f8e68]: Patient Name
+            - textbox [ref=f8e69]
+          - generic [ref=f8e70]:
+            - generic [ref=f8e71]: Accession No
+            - textbox [ref=f8e72]
+          - generic [ref=f8e73]:
+            - generic [ref=f8e74]: From / To
+            - generic [ref=f8e75]:
+              - textbox [ref=f8e76]
+              - textbox [ref=f8e77]
+        - generic [ref=f8e78]: Modality
+        - generic [ref=f8e79]:
+          - generic [ref=f8e80]:
+            - checkbox "CT" [ref=f8e81]
+            - text: CT
+          - generic [ref=f8e82]:
+            - checkbox "MR" [ref=f8e83]
+            - text: MR
+          - generic [ref=f8e84]:
+            - checkbox "CR" [ref=f8e85]
+            - text: CR
+          - generic [ref=f8e86]:
+            - checkbox "DX" [ref=f8e87]
+            - text: DX
+          - generic [ref=f8e88]:
+            - checkbox "US" [ref=f8e89]
+            - text: US
+          - generic [ref=f8e90]:
+            - checkbox "MG" [ref=f8e91]
+            - text: MG
+          - generic [ref=f8e92]:
+            - checkbox "NM" [ref=f8e93]
+            - text: NM
+          - generic [ref=f8e94]:
+            - checkbox "PT" [ref=f8e95]
+            - text: PT
+          - generic [ref=f8e96]:
+            - checkbox "XA" [ref=f8e97]
+            - text: XA
+        - generic [ref=f8e98]:
+          - button "Search" [ref=f8e99] [cursor=pointer]
+          - button "Clear" [ref=f8e100] [cursor=pointer]
+      - generic [ref=f8e101]:
+        - button "ALL (5010)" [ref=f8e135] [cursor=pointer]
+        - button "READY (1025)" [ref=f8e136] [cursor=pointer]
+        - button "DRAFT (965)" [ref=f8e137] [cursor=pointer]
+        - button "PRELIMINARY (1046)" [ref=f8e138] [cursor=pointer]
+        - button "FINAL (1000)" [ref=f8e139] [cursor=pointer]
+        - button "CANCELLED (974)" [ref=f8e140] [cursor=pointer]
+        - button "PENDING (1990)" [ref=f8e141] [cursor=pointer]
+        - generic [ref=f8e109]: "Rows:"
+        - combobox [ref=f8e110]:
+          - option "10"
+          - option "20" [selected]
+          - option "50"
+          - option "100"
+      - generic [ref=f8e111]:
+        - table [ref=f8e112]:
+          - rowgroup [ref=f8e113]:
+            - row [ref=f8e114]:
+              - columnheader "Sl" [ref=f8e115] [cursor=pointer]
+              - columnheader "Patient ID" [ref=f8e116] [cursor=pointer]
+              - columnheader "Patient Name" [ref=f8e117] [cursor=pointer]
+              - columnheader "Accession" [ref=f8e118] [cursor=pointer]
+              - columnheader "Study Date" [ref=f8e119] [cursor=pointer]
+              - columnheader "Time" [ref=f8e120] [cursor=pointer]
+              - columnheader "Modality" [ref=f8e121] [cursor=pointer]
+              - columnheader "Description" [ref=f8e122] [cursor=pointer]
+              - columnheader "Ref Doctor" [ref=f8e123] [cursor=pointer]
+              - columnheader "Assigned" [ref=f8e124] [cursor=pointer]
+              - columnheader "Status" [ref=f8e125] [cursor=pointer]
+              - columnheader "Images" [ref=f8e126] [cursor=pointer]
+              - columnheader "Actions" [ref=f8e127] [cursor=pointer]
+          - rowgroup [ref=f8e128]:
+            - row [ref=f8e142]:
+              - cell "1" [ref=f8e143]
+              - cell "PERF00000515" [ref=f8e144]
+              - cell "Mohammed Khan" [ref=f8e145]
+              - cell "PERF00000001" [ref=f8e146]
+              - cell "11/14/2025" [ref=f8e147]
+              - cell "6:13:51 PM" [ref=f8e148]
+              - cell "NM" [ref=f8e149]
+              - cell "PET CT" [ref=f8e150]
+              - cell "—" [ref=f8e151]
+              - cell "System Administrator" [ref=f8e152]
+              - cell "CANCELLED" [ref=f8e153]
+              - cell "349" [ref=f8e154]
+              - cell [ref=f8e155]:
+                - generic [ref=f8e156]:
+                  - button "Open Study" [disabled] [ref=f8e157] [cursor=pointer]
+                  - button "Report" [ref=f8e158] [cursor=pointer]
+                  - button "Operations" [active] [ref=f8e159] [cursor=pointer]
+            - row [ref=f8e160]:
+              - cell "2" [ref=f8e161]
+              - cell "PERF00000331" [ref=f8e162]
+              - cell "Mohammed Pillai" [ref=f8e163]
+              - cell "PERF00000477" [ref=f8e164]
+              - cell "11/14/2025" [ref=f8e165]
+              - cell "6:14:00 PM" [ref=f8e166]
+              - cell "DX" [ref=f8e167]
+              - cell "CT ABDOMEN" [ref=f8e168]
+              - cell "—" [ref=f8e169]
+              - cell "—" [ref=f8e170]
+              - cell "PRELIMINARY" [ref=f8e171]
+              - cell "90" [ref=f8e172]
+              - cell [ref=f8e173]:
+                - generic [ref=f8e174]:
+                  - button "Open Study" [disabled] [ref=f8e175] [cursor=pointer]
+                  - button "Report" [ref=f8e176] [cursor=pointer]
+                  - button "Operations" [ref=f8e177] [cursor=pointer]
+            - row [ref=f8e178]:
+              - cell "3" [ref=f8e179]
+              - cell "PERF00000286" [ref=f8e180]
+              - cell "Anita Mathew" [ref=f8e181]
+              - cell "PERF00000543" [ref=f8e182]
+              - cell "11/14/2025" [ref=f8e183]
+              - cell "6:14:01 PM" [ref=f8e184]
+              - cell "DX" [ref=f8e185]
+              - cell "CHEST" [ref=f8e186]
+              - cell "—" [ref=f8e187]
+              - cell "—" [ref=f8e188]
+              - cell "FINAL" [ref=f8e189]
+              - cell "252" [ref=f8e190]
+              - cell [ref=f8e191]:
+                - generic [ref=f8e192]:
+                  - button "Open Study" [disabled] [ref=f8e193] [cursor=pointer]
+                  - button "Report" [ref=f8e194] [cursor=pointer]
+                  - button "Operations" [ref=f8e195] [cursor=pointer]
+            - row [ref=f8e196]:
+              - cell "4" [ref=f8e197]
+              - cell "PERF00000741" [ref=f8e198]
+              - cell "Rahul Menon" [ref=f8e199]
+              - cell "PERF00001098" [ref=f8e200]
+              - cell "11/14/2025" [ref=f8e201]
+              - cell "6:14:11 PM" [ref=f8e202]
+              - cell "PT" [ref=f8e203]
+              - cell "PET CT" [ref=f8e204]
+              - cell "—" [ref=f8e205]
+              - cell "—" [ref=f8e206]
+              - cell "READY" [ref=f8e207]
+              - cell "257" [ref=f8e208]
+              - cell [ref=f8e209]:
+                - generic [ref=f8e210]:
+                  - button "Open Study" [disabled] [ref=f8e211] [cursor=pointer]
+                  - button "Report" [ref=f8e212] [cursor=pointer]
+                  - button "Operations" [ref=f8e213] [cursor=pointer]
+            - row [ref=f8e214]:
+              - cell "5" [ref=f8e215]
+              - cell "PERF00000426" [ref=f8e216]
+              - cell "Anita Kumar" [ref=f8e217]
+              - cell "PERF00001868" [ref=f8e218]
+              - cell "11/14/2025" [ref=f8e219]
+              - cell "6:14:26 PM" [ref=f8e220]
+              - cell "MR" [ref=f8e221]
+              - cell "BRAIN MRI" [ref=f8e222]
+              - cell "—" [ref=f8e223]
+              - cell "—" [ref=f8e224]
+              - cell "CANCELLED" [ref=f8e225]
+              - cell "339" [ref=f8e226]
+              - cell [ref=f8e227]:
+                - generic [ref=f8e228]:
+                  - button "Open Study" [disabled] [ref=f8e229] [cursor=pointer]
+                  - button "Report" [ref=f8e230] [cursor=pointer]
+                  - button "Operations" [ref=f8e231] [cursor=pointer]
+            - row [ref=f8e232]:
+              - cell "6" [ref=f8e233]
+              - cell "PERF00000569" [ref=f8e234]
+              - cell "Fathima Joseph" [ref=f8e235]
+              - cell "PERF00002192" [ref=f8e236]
+              - cell "11/14/2025" [ref=f8e237]
+              - cell "6:14:32 PM" [ref=f8e238]
+              - cell "CR" [ref=f8e239]
+              - cell "MAMMOGRAM" [ref=f8e240]
+              - cell "—" [ref=f8e241]
+              - cell "—" [ref=f8e242]
+              - cell "PRELIMINARY" [ref=f8e243]
+              - cell "483" [ref=f8e244]
+              - cell [ref=f8e245]:
+                - generic [ref=f8e246]:
+                  - button "Open Study" [disabled] [ref=f8e247] [cursor=pointer]
+                  - button "Report" [ref=f8e248] [cursor=pointer]
+                  - button "Operations" [ref=f8e249] [cursor=pointer]
+            - row [ref=f8e250]:
+              - cell "7" [ref=f8e251]
+              - cell "PERF00000121" [ref=f8e252]
+              - cell "Thomas Kumar" [ref=f8e253]
+              - cell "PERF00002256" [ref=f8e254]
+              - cell "11/14/2025" [ref=f8e255]
+              - cell "6:14:33 PM" [ref=f8e256]
+              - cell "MG" [ref=f8e257]
+              - cell "ANGIOGRAM" [ref=f8e258]
+              - cell "—" [ref=f8e259]
+              - cell "—" [ref=f8e260]
+              - cell "FINAL" [ref=f8e261]
+              - cell "318" [ref=f8e262]
+              - cell [ref=f8e263]:
+                - generic [ref=f8e264]:
+                  - button "Open Study" [disabled] [ref=f8e265] [cursor=pointer]
+                  - button "Report" [ref=f8e266] [cursor=pointer]
+                  - button "Operations" [ref=f8e267] [cursor=pointer]
+            - row [ref=f8e268]:
+              - cell "8" [ref=f8e269]
+              - cell "PERF00000083" [ref=f8e270]
+              - cell "Joseph Mathew" [ref=f8e271]
+              - cell "PERF00002445" [ref=f8e272]
+              - cell "11/14/2025" [ref=f8e273]
+              - cell "6:14:36 PM" [ref=f8e274]
+              - cell "DX" [ref=f8e275]
+              - cell "MAMMOGRAM" [ref=f8e276]
+              - cell "—" [ref=f8e277]
+              - cell "—" [ref=f8e278]
+              - cell "PRELIMINARY" [ref=f8e279]
+              - cell "142" [ref=f8e280]
+              - cell [ref=f8e281]:
+                - generic [ref=f8e282]:
+                  - button "Open Study" [disabled] [ref=f8e283] [cursor=pointer]
+                  - button "Report" [ref=f8e284] [cursor=pointer]
+                  - button "Operations" [ref=f8e285] [cursor=pointer]
+            - row [ref=f8e286]:
+              - cell "9" [ref=f8e287]
+              - cell "PERF00000371" [ref=f8e288]
+              - cell "Rahul Pillai" [ref=f8e289]
+              - cell "PERF00002738" [ref=f8e290]
+              - cell "11/14/2025" [ref=f8e291]
+              - cell "6:14:42 PM" [ref=f8e292]
+              - cell "NM" [ref=f8e293]
+              - cell "CHEST" [ref=f8e294]
+              - cell "—" [ref=f8e295]
+              - cell "—" [ref=f8e296]
+              - cell "PRELIMINARY" [ref=f8e297]
+              - cell "135" [ref=f8e298]
+              - cell [ref=f8e299]:
+                - generic [ref=f8e300]:
+                  - button "Open Study" [disabled] [ref=f8e301] [cursor=pointer]
+                  - button "Report" [ref=f8e302] [cursor=pointer]
+                  - button "Operations" [ref=f8e303] [cursor=pointer]
+            - row [ref=f8e304]:
+              - cell "10" [ref=f8e305]
+              - cell "PERF00000434" [ref=f8e306]
+              - cell "Meera Reddy" [ref=f8e307]
+              - cell "PERF00002982" [ref=f8e308]
+              - cell "11/14/2025" [ref=f8e309]
+              - cell "6:14:46 PM" [ref=f8e310]
+              - cell "DX" [ref=f8e311]
+              - cell "KNEE XRAY" [ref=f8e312]
+              - cell "—" [ref=f8e313]
+              - cell "—" [ref=f8e314]
+              - cell "DRAFT" [ref=f8e315]
+              - cell "377" [ref=f8e316]
+              - cell [ref=f8e317]:
+                - generic [ref=f8e318]:
+                  - button "Open Study" [disabled] [ref=f8e319] [cursor=pointer]
+                  - button "Report" [ref=f8e320] [cursor=pointer]
+                  - button "Operations" [ref=f8e321] [cursor=pointer]
+            - row [ref=f8e322]:
+              - cell "11" [ref=f8e323]
+              - cell "PERF00000531" [ref=f8e324]
+              - cell "Fathima Nair" [ref=f8e325]
+              - cell "PERF00003112" [ref=f8e326]
+              - cell "11/14/2025" [ref=f8e327]
+              - cell "6:14:48 PM" [ref=f8e328]
+              - cell "US" [ref=f8e329]
+              - cell "ANGIOGRAM" [ref=f8e330]
+              - cell "—" [ref=f8e331]
+              - cell "—" [ref=f8e332]
+              - cell "PRELIMINARY" [ref=f8e333]
+              - cell "442" [ref=f8e334]
+              - cell [ref=f8e335]:
+                - generic [ref=f8e336]:
+                  - button "Open Study" [disabled] [ref=f8e337] [cursor=pointer]
+                  - button "Report" [ref=f8e338] [cursor=pointer]
+                  - button "Operations" [ref=f8e339] [cursor=pointer]
+            - row [ref=f8e340]:
+              - cell "12" [ref=f8e341]
+              - cell "PERF00000168" [ref=f8e342]
+              - cell "Vijay Joseph" [ref=f8e343]
+              - cell "PERF00003849" [ref=f8e344]
+              - cell "11/14/2025" [ref=f8e345]
+              - cell "6:15:02 PM" [ref=f8e346]
+              - cell "CT" [ref=f8e347]
+              - cell "MAMMOGRAM" [ref=f8e348]
+              - cell "—" [ref=f8e349]
+              - cell "—" [ref=f8e350]
+              - cell "PRELIMINARY" [ref=f8e351]
+              - cell "441" [ref=f8e352]
+              - cell [ref=f8e353]:
+                - generic [ref=f8e354]:
+                  - button "Open Study" [disabled] [ref=f8e355] [cursor=pointer]
+                  - button "Report" [ref=f8e356] [cursor=pointer]
+                  - button "Operations" [ref=f8e357] [cursor=pointer]
+            - row [ref=f8e358]:
+              - cell "13" [ref=f8e359]
+              - cell "PERF00000220" [ref=f8e360]
+              - cell "Fathima Joseph" [ref=f8e361]
+              - cell "PERF00004147" [ref=f8e362]
+              - cell "11/14/2025" [ref=f8e363]
+              - cell "6:15:07 PM" [ref=f8e364]
+              - cell "CT" [ref=f8e365]
+              - cell "PET CT" [ref=f8e366]
+              - cell "—" [ref=f8e367]
+              - cell "—" [ref=f8e368]
+              - cell "CANCELLED" [ref=f8e369]
+              - cell "100" [ref=f8e370]
+              - cell [ref=f8e371]:
+                - generic [ref=f8e372]:
+                  - button "Open Study" [disabled] [ref=f8e373] [cursor=pointer]
+                  - button "Report" [ref=f8e374] [cursor=pointer]
+                  - button "Operations" [ref=f8e375] [cursor=pointer]
+            - row [ref=f8e376]:
+              - cell "14" [ref=f8e377]
+              - cell "PERF00000307" [ref=f8e378]
+              - cell "Vijay Anand" [ref=f8e379]
+              - cell "PERF00004306" [ref=f8e380]
+              - cell "11/14/2025" [ref=f8e381]
+              - cell "6:15:10 PM" [ref=f8e382]
+              - cell "MR" [ref=f8e383]
+              - cell "CT UROGRAM" [ref=f8e384]
+              - cell "—" [ref=f8e385]
+              - cell "—" [ref=f8e386]
+              - cell "FINAL" [ref=f8e387]
+              - cell "183" [ref=f8e388]
+              - cell [ref=f8e389]:
+                - generic [ref=f8e390]:
+                  - button "Open Study" [disabled] [ref=f8e391] [cursor=pointer]
+                  - button "Report" [ref=f8e392] [cursor=pointer]
+                  - button "Operations" [ref=f8e393] [cursor=pointer]
+            - row [ref=f8e394]:
+              - cell "15" [ref=f8e395]
+              - cell "PERF00000828" [ref=f8e396]
+              - cell "Anita Nair" [ref=f8e397]
+              - cell "PERF00004563" [ref=f8e398]
+              - cell "11/14/2025" [ref=f8e399]
+              - cell "6:15:15 PM" [ref=f8e400]
+              - cell "XA" [ref=f8e401]
+              - cell "HRCT THORAX" [ref=f8e402]
+              - cell "—" [ref=f8e403]
+              - cell "—" [ref=f8e404]
+              - cell "DRAFT" [ref=f8e405]
+              - cell "204" [ref=f8e406]
+              - cell [ref=f8e407]:
+                - generic [ref=f8e408]:
+                  - button "Open Study" [disabled] [ref=f8e409] [cursor=pointer]
+                  - button "Report" [ref=f8e410] [cursor=pointer]
+                  - button "Operations" [ref=f8e411] [cursor=pointer]
+            - row [ref=f8e412]:
+              - cell "16" [ref=f8e413]
+              - cell "PERF00000967" [ref=f8e414]
+              - cell "Lakshmi Menon" [ref=f8e415]
+              - cell "PERF00004624" [ref=f8e416]
+              - cell "11/14/2025" [ref=f8e417]
+              - cell "6:15:16 PM" [ref=f8e418]
+              - cell "MR" [ref=f8e419]
+              - cell "CHEST" [ref=f8e420]
+              - cell "—" [ref=f8e421]
+              - cell "—" [ref=f8e422]
+              - cell "FINAL" [ref=f8e423]
+              - cell "395" [ref=f8e424]
+              - cell [ref=f8e425]:
+                - generic [ref=f8e426]:
+                  - button "Open Study" [disabled] [ref=f8e427] [cursor=pointer]
+                  - button "Report" [ref=f8e428] [cursor=pointer]
+                  - button "Operations" [ref=f8e429] [cursor=pointer]
+            - row [ref=f8e430]:
+              - cell "17" [ref=f8e431]
+              - cell "PERF00000742" [ref=f8e432]
+              - cell "Priya Iyer" [ref=f8e433]
+              - cell "PERF00004873" [ref=f8e434]
+              - cell "11/14/2025" [ref=f8e435]
+              - cell "6:15:21 PM" [ref=f8e436]
+              - cell "PT" [ref=f8e437]
+              - cell "MAMMOGRAM" [ref=f8e438]
+              - cell "—" [ref=f8e439]
+              - cell "—" [ref=f8e440]
+              - cell "PRELIMINARY" [ref=f8e441]
+              - cell "29" [ref=f8e442]
+              - cell [ref=f8e443]:
+                - generic [ref=f8e444]:
+                  - button "Open Study" [disabled] [ref=f8e445] [cursor=pointer]
+                  - button "Report" [ref=f8e446] [cursor=pointer]
+                  - button "Operations" [ref=f8e447] [cursor=pointer]
+            - row [ref=f8e448]:
+              - cell "18" [ref=f8e449]
+              - cell "PERF00000115" [ref=f8e450]
+              - cell "Sita Reddy" [ref=f8e451]
+              - cell "PERF00000121" [ref=f8e452]
+              - cell "11/15/2025" [ref=f8e453]
+              - cell "6:13:53 PM" [ref=f8e454]
+              - cell "NM" [ref=f8e455]
+              - cell "HRCT THORAX" [ref=f8e456]
+              - cell "—" [ref=f8e457]
+              - cell "—" [ref=f8e458]
+              - cell "PRELIMINARY" [ref=f8e459]
+              - cell "14" [ref=f8e460]
+              - cell [ref=f8e461]:
+                - generic [ref=f8e462]:
+                  - button "Open Study" [disabled] [ref=f8e463] [cursor=pointer]
+                  - button "Report" [ref=f8e464] [cursor=pointer]
+                  - button "Operations" [ref=f8e465] [cursor=pointer]
+            - row [ref=f8e466]:
+              - cell "19" [ref=f8e467]
+              - cell "PERF00000593" [ref=f8e468]
+              - cell "Vijay Reddy" [ref=f8e469]
+              - cell "PERF00000429" [ref=f8e470]
+              - cell "11/15/2025" [ref=f8e471]
+              - cell "6:13:59 PM" [ref=f8e472]
+              - cell "NM" [ref=f8e473]
+              - cell "KNEE XRAY" [ref=f8e474]
+              - cell "—" [ref=f8e475]
+              - cell "—" [ref=f8e476]
+              - cell "DRAFT" [ref=f8e477]
+              - cell "93" [ref=f8e478]
+              - cell [ref=f8e479]:
+                - generic [ref=f8e480]:
+                  - button "Open Study" [disabled] [ref=f8e481] [cursor=pointer]
+                  - button "Report" [ref=f8e482] [cursor=pointer]
+                  - button "Operations" [ref=f8e483] [cursor=pointer]
+            - row [ref=f8e484]:
+              - cell "20" [ref=f8e485]
+              - cell "PERF00000478" [ref=f8e486]
+              - cell "Reena Iyer" [ref=f8e487]
+              - cell "PERF00000686" [ref=f8e488]
+              - cell "11/15/2025" [ref=f8e489]
+              - cell "6:14:04 PM" [ref=f8e490]
+              - cell "PT" [ref=f8e491]
+              - cell "CT UROGRAM" [ref=f8e492]
+              - cell "—" [ref=f8e493]
+              - cell "—" [ref=f8e494]
+              - cell "DRAFT" [ref=f8e495]
+              - cell "146" [ref=f8e496]
+              - cell [ref=f8e497]:
+                - generic [ref=f8e498]:
+                  - button "Open Study" [disabled] [ref=f8e499] [cursor=pointer]
+                  - button "Report" [ref=f8e500] [cursor=pointer]
+                  - button "Operations" [ref=f8e501] [cursor=pointer]
+        - generic [ref=f8e131]:
+          - generic [ref=f8e132]: 5010 total · page 1/251
+          - button "Prev" [disabled] [ref=f8e133] [cursor=pointer]
+          - button "Next" [ref=f8e134] [cursor=pointer]
+      - generic [ref=f8e503]:
+        - generic [ref=f8e504]:
+          - heading "Study Operations" [level=2] [ref=f8e505]
+          - button "Close" [ref=f8e506] [cursor=pointer]
+        - generic [ref=f8e508]:
+          - generic [ref=f8e509]:
+            - generic [ref=f8e510]: Study UID
+            - generic [ref=f8e511]: 1.2.826.1794573831686.6270723.203483
+          - generic [ref=f8e512]:
+            - generic [ref=f8e513]: Patient
+            - generic [ref=f8e514]: PERF00000515
+          - generic [ref=f8e515]:
+            - generic [ref=f8e516]: Modality
+            - generic [ref=f8e517]: NM
+          - generic [ref=f8e518]:
+            - generic [ref=f8e519]: Instances
+            - generic [ref=f8e520]: "349"
+          - generic [ref=f8e521]:
+            - generic [ref=f8e522]: Accession
+            - generic [ref=f8e523]: PERF00000001
+          - generic [ref=f8e524]:
+            - generic [ref=f8e525]: Study Storage
+            - generic [ref=f8e526]: —
+        - generic [ref=f8e527]:
+          - generic [ref=f8e528]:
+            - generic [ref=f8e529]: Transfers
+            - generic [ref=f8e530]: "0"
+          - generic [ref=f8e531]:
+            - generic [ref=f8e532]: Archives
+            - generic [ref=f8e533]: "0"
+          - generic [ref=f8e534]:
+            - generic [ref=f8e535]: Verified
+            - generic [ref=f8e536]: "0"
+          - generic [ref=f8e537]:
+            - generic [ref=f8e538]: Failures
+            - generic [ref=f8e539]: "0"
+        - button "Push study to destination…" [ref=f8e541] [cursor=pointer]
+        - heading "Reverse Push History" [level=3] [ref=f8e542]
+        - table [ref=f8e544]:
+          - rowgroup [ref=f8e545]:
+            - row [ref=f8e546]:
+              - columnheader "Status" [ref=f8e547] [cursor=pointer]
+              - columnheader "Destination" [ref=f8e548] [cursor=pointer]
+              - columnheader "Instances" [ref=f8e549] [cursor=pointer]
+              - columnheader "Created" [ref=f8e550] [cursor=pointer]
+              - columnheader "Completed" [ref=f8e551] [cursor=pointer]
+          - rowgroup [ref=f8e552]:
+            - row [ref=f8e553]:
+              - cell "No reverse-push history." [ref=f8e554]
+        - heading "Archive History & Integrity" [level=3] [ref=f8e555]
+        - table [ref=f8e557]:
+          - rowgroup [ref=f8e558]:
+            - row [ref=f8e559]:
+              - columnheader "Status" [ref=f8e560] [cursor=pointer]
+              - columnheader "Original → Compressed" [ref=f8e561] [cursor=pointer]
+              - columnheader "Verified" [ref=f8e562] [cursor=pointer]
+              - columnheader "Created" [ref=f8e563] [cursor=pointer]
+              - columnheader "Completed" [ref=f8e564] [cursor=pointer]
+          - rowgroup [ref=f8e565]:
+            - row [ref=f8e566]:
+              - cell "No archive history." [ref=f8e567]

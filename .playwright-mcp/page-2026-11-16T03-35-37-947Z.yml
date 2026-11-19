@@ -1,0 +1,101 @@
+- generic [ref=f5e3]:
+  - complementary [ref=f5e4]:
+    - generic [ref=f5e5]:
+      - generic [ref=f5e6]: 🩻 RIS·PACS
+      - generic [ref=f5e7]: Enterprise Edition
+    - navigation [ref=f5e8]:
+      - generic [ref=f5e9]:
+        - generic [ref=f5e10]: Overview
+        - link "Dashboard" [ref=f5e11] [cursor=pointer]:
+          - /url: /
+      - generic [ref=f5e12]:
+        - generic [ref=f5e13]: Radiology
+        - link "Worklist" [ref=f5e14] [cursor=pointer]:
+          - /url: /worklist
+        - link "Patients" [ref=f5e15] [cursor=pointer]:
+          - /url: /patients
+        - link "Examination Orders" [ref=f5e16] [cursor=pointer]:
+          - /url: /orders
+      - generic [ref=f5e17]:
+        - generic [ref=f5e18]: PACS
+        - link "PACS Monitoring" [ref=f5e19] [cursor=pointer]:
+          - /url: /pacs/monitor
+        - link "Reception Logs" [ref=f5e20] [cursor=pointer]:
+          - /url: /pacs/reception-logs
+        - link "Reconciliation" [ref=f5e21] [cursor=pointer]:
+          - /url: /pacs/reconciliation
+        - link "Modality Worklist" [ref=f5e22] [cursor=pointer]:
+          - /url: /pacs/mwl
+      - generic [ref=f5e23]:
+        - generic [ref=f5e24]: PACS Operations
+        - link "Command Centre" [ref=f5e25] [cursor=pointer]:
+          - /url: /pacs/operations/command-centre
+        - link "Exceptions Console" [ref=f5e26] [cursor=pointer]:
+          - /url: /pacs/operations/exceptions
+        - link "Reverse Push Monitor" [ref=f5e27] [cursor=pointer]:
+          - /url: /pacs/reverse-push
+        - link "Archive Compression" [ref=f5e28] [cursor=pointer]:
+          - /url: /pacs/archive
+        - link "Storage Management" [ref=f5e29] [cursor=pointer]:
+          - /url: /pacs/storage
+        - link "Transfer & Archive History" [ref=f5e30] [cursor=pointer]:
+          - /url: /pacs/operations/history
+      - generic [ref=f5e31]:
+        - generic [ref=f5e32]: Reporting
+        - link "Reporting Worklist" [ref=f5e33] [cursor=pointer]:
+          - /url: /reporting
+      - generic [ref=f5e34]:
+        - generic [ref=f5e35]: Operations
+        - link "Notifications" [ref=f5e36] [cursor=pointer]:
+          - /url: /notifications
+        - link "System Monitoring" [ref=f5e37] [cursor=pointer]:
+          - /url: /ops/monitoring
+        - link "Alert Management" [ref=f5e38] [cursor=pointer]:
+          - /url: /ops/alerts
+        - link "Audit Logs" [ref=f5e39] [cursor=pointer]:
+          - /url: /ops/audit
+      - generic [ref=f5e40]:
+        - generic [ref=f5e41]: Administration
+        - link "Organizations" [ref=f5e42] [cursor=pointer]:
+          - /url: /admin/organizations
+        - link "Departments" [ref=f5e43] [cursor=pointer]:
+          - /url: /admin/departments
+        - link "Doctors" [ref=f5e44] [cursor=pointer]:
+          - /url: /admin/doctors
+        - link "Users" [ref=f5e45] [cursor=pointer]:
+          - /url: /admin/users
+        - link "Modalities" [ref=f5e46] [cursor=pointer]:
+          - /url: /admin/modalities
+        - link "Report Templates" [ref=f5e47] [cursor=pointer]:
+          - /url: /admin/report-templates
+  - banner [ref=f5e48]:
+    - strong [ref=f5e49]: Administration
+    - generic [ref=f5e50]:
+      - button "Notifications" [ref=f5e52] [cursor=pointer]: 🔔
+      - button "🌙" [ref=f5e53] [cursor=pointer]
+      - generic [ref=f5e54]: ophist_rp
+      - button "Logout" [ref=f5e55] [cursor=pointer]
+  - main [ref=f5e56]:
+    - generic [ref=f5e57]:
+      - generic [ref=f5e58]:
+        - heading "Operations Exceptions" [level=1] [ref=f5e59]
+        - button "Refreshing…" [disabled] [ref=f5e60] [cursor=pointer]
+      - generic [ref=f5e61]:
+        - button "All" [ref=f5e62] [cursor=pointer]
+        - button "Confirmed" [ref=f5e63] [cursor=pointer]
+        - button "Heuristic" [ref=f5e64] [cursor=pointer]
+        - button "Infrastructure" [ref=f5e65] [cursor=pointer]
+        - generic [ref=f5e66]: Read-only; recovery uses existing module actions
+      - table [ref=f5e68]:
+        - rowgroup [ref=f5e69]:
+          - row [ref=f5e70]:
+            - columnheader "Class" [ref=f5e71] [cursor=pointer]
+            - columnheader "Exception" [ref=f5e72] [cursor=pointer]
+            - columnheader "Study / Target" [ref=f5e73] [cursor=pointer]
+            - columnheader "Patient" [ref=f5e74] [cursor=pointer]
+            - columnheader "Detail" [ref=f5e75] [cursor=pointer]
+            - columnheader "When" [ref=f5e76] [cursor=pointer]
+            - columnheader "Recovery" [ref=f5e77] [cursor=pointer]
+        - rowgroup [ref=f5e78]:
+          - row [ref=f5e79]:
+            - cell "Loading exceptions…" [ref=f5e80]

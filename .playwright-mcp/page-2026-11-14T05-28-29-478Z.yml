@@ -1,0 +1,119 @@
+- generic [ref=f1e3]:
+  - complementary [ref=f1e4]:
+    - generic [ref=f1e5]:
+      - generic [ref=f1e6]: 🩻 RIS·PACS
+      - generic [ref=f1e7]: Enterprise Edition
+    - navigation [ref=f1e8]:
+      - generic [ref=f1e9]:
+        - generic [ref=f1e10]: Overview
+        - link "Dashboard" [ref=f1e11] [cursor=pointer]:
+          - /url: /
+      - generic [ref=f1e12]:
+        - generic [ref=f1e13]: Radiology
+        - link "Worklist" [ref=f1e14] [cursor=pointer]:
+          - /url: /worklist
+        - link "Patients" [ref=f1e15] [cursor=pointer]:
+          - /url: /patients
+        - link "Examination Orders" [ref=f1e16] [cursor=pointer]:
+          - /url: /orders
+      - generic [ref=f1e17]:
+        - generic [ref=f1e18]: PACS
+        - link "PACS Monitoring" [ref=f1e19] [cursor=pointer]:
+          - /url: /pacs/monitor
+        - link "Reception Logs" [ref=f1e20] [cursor=pointer]:
+          - /url: /pacs/reception-logs
+        - link "Reconciliation" [ref=f1e21] [cursor=pointer]:
+          - /url: /pacs/reconciliation
+        - link "Modality Worklist" [ref=f1e22] [cursor=pointer]:
+          - /url: /pacs/mwl
+      - generic [ref=f1e23]:
+        - generic [ref=f1e24]: Reporting
+        - link "Reporting Worklist" [ref=f1e25] [cursor=pointer]:
+          - /url: /reporting
+      - generic [ref=f1e26]:
+        - generic [ref=f1e27]: Administration
+        - link "Organizations" [ref=f1e28] [cursor=pointer]:
+          - /url: /admin/organizations
+        - link "Departments" [ref=f1e29] [cursor=pointer]:
+          - /url: /admin/departments
+        - link "Doctors" [ref=f1e30] [cursor=pointer]:
+          - /url: /admin/doctors
+        - link "Users" [ref=f1e31] [cursor=pointer]:
+          - /url: /admin/users
+        - link "Modalities" [ref=f1e32] [cursor=pointer]:
+          - /url: /admin/modalities
+        - link "Report Templates" [ref=f1e33] [cursor=pointer]:
+          - /url: /admin/report-templates
+  - banner [ref=f1e34]:
+    - strong [ref=f1e35]: Administration
+    - generic [ref=f1e36]:
+      - button "🌙" [ref=f1e37] [cursor=pointer]
+      - generic [ref=f1e38]: rad_ggh
+      - button "Logout" [ref=f1e39] [cursor=pointer]
+  - main [ref=f1e40]:
+    - generic [ref=f1e484]:
+      - generic [ref=f1e485]:
+        - heading "Radiology Report" [level=1] [ref=f1e486]
+        - generic [ref=f1e487]:
+          - button "🖼 Open in Viewer" [ref=f1e488] [cursor=pointer]
+          - button "← Reporting Worklist" [ref=f1e489] [cursor=pointer]
+      - generic [ref=f1e491]:
+        - generic [ref=f1e492]:
+          - generic [ref=f1e493]: Patient
+          - generic [ref=f1e494]: — (—)
+        - generic [ref=f1e495]:
+          - generic [ref=f1e496]: Accession
+          - generic [ref=f1e497]: "20261114000001"
+        - generic [ref=f1e498]:
+          - generic [ref=f1e499]: Modality / Description
+          - generic [ref=f1e500]: CT — CT CHEST VOLUME
+        - generic [ref=f1e501]:
+          - generic [ref=f1e502]: Study Date
+          - generic [ref=f1e503]: 11/14/2026, 5:30:00 AM
+      - generic [ref=f1e509]:
+        - generic [ref=f1e510]: DRAFT
+        - generic [ref=f1e511]: v1
+        - generic [ref=f1e512]:
+          - button "Submit Preliminary" [ref=f1e513] [cursor=pointer]
+          - button "Finalize" [ref=f1e514] [cursor=pointer]
+          - button "PDF" [ref=f1e515] [cursor=pointer]
+      - generic [ref=f1e516]:
+        - generic [ref=f1e517]:
+          - generic [ref=f1e518]: Clinical History
+          - textbox [ref=f1e519]
+        - generic [ref=f1e520]:
+          - generic [ref=f1e521]: Technique
+          - textbox [ref=f1e522]: Volumetric CT of the chest was performed.
+        - generic [ref=f1e523]:
+          - generic [ref=f1e524]: Comparison
+          - textbox [ref=f1e525]
+        - generic [ref=f1e526]:
+          - generic [ref=f1e527]:
+            - text: Findings
+            - button "Findings" [ref=f1e528] [cursor=pointer]: 🎙 Dictate
+          - textbox [ref=f1e529]: "Lungs: Mediastinum: Pleura: Chest wall:"
+        - generic [ref=f1e530]:
+          - generic [ref=f1e531]:
+            - text: Impression
+            - button "Impression" [ref=f1e532] [cursor=pointer]: 🎙 Dictate
+          - textbox [ref=f1e533]
+        - generic [ref=f1e534]:
+          - generic [ref=f1e535]: Recommendations
+          - textbox [ref=f1e536]
+      - generic [ref=f1e537]:
+        - heading "Version History (1)" [level=3] [ref=f1e538]
+        - table [ref=f1e539]:
+          - rowgroup [ref=f1e540]:
+            - row [ref=f1e541]:
+              - columnheader "Ver" [ref=f1e542] [cursor=pointer]
+              - columnheader "Status" [ref=f1e543] [cursor=pointer]
+              - columnheader "Reason" [ref=f1e544] [cursor=pointer]
+              - columnheader "By" [ref=f1e545] [cursor=pointer]
+              - columnheader "When" [ref=f1e546] [cursor=pointer]
+          - rowgroup [ref=f1e547]:
+            - row [ref=f1e548]:
+              - cell "1" [ref=f1e549]
+              - cell "DRAFT" [ref=f1e550]
+              - cell "created" [ref=f1e551]
+              - cell "d37b8db5-e215-4cb5-9acf-5ce4cd6c58f7" [ref=f1e552]
+              - cell "11/14/2026, 10:58:28 AM" [ref=f1e553]

@@ -1,0 +1,31 @@
+feature,area,priority,original,clone,notes
+Worklist list of studies,worklist,must,yes,no,"columns: patient id/name, accession, datetime, gender/age, description, status, ref doctor, modality, assigned doctor, images"
+Search by patient id/name,worklist,must,yes,no,
+Search by date range (From/To + Today/Yesterday/14d/30d),worklist,must,yes,no,
+Filter by modality (CT MR CR ECG XA NM PT MG US OPG ES),worklist,must,yes,no,multi-select + Select all
+Filter by report status (Ready/Draft/Preliminary/Final),worklist,must,yes,no,segmented tabs
+Search by referring doctor / assigned doctor / tags,worklist,should,yes,no,
+Search by report content,worklist,should,yes,no,full-text over reports
+Pagination + rows per page,worklist,must,yes,no,48117 rows -> server-side paging
+My Assignment toggle,worklist,should,yes,no,show only studies assigned to me
+Per-row actions (view/open viewer/assign/edit/report),worklist,must,yes,no,
+DICOM study arrival (C-STORE receiver),ingest,must,yes,no,modality push or import
+Modality Worklist (MWL) provider,ingest,should,yes,no,modalities query scheduled studies
+Web DICOM viewer,viewer,must,yes,no,zoom/pan/window-level/measure
+Compare priors,viewer,should,yes,no,
+Multi-frame / large series (up to 6645 images),viewer,must,yes,no,CT/MR performance
+Report editor,reporting,must,yes,no,
+Report templates,reporting,must,yes,no,Utilities > Report Template
+Report lifecycle Ready->Draft->Preliminary->Final,reporting,must,yes,no,
+Sign / finalize report,reporting,must,yes,no,
+Lock reports,reporting,should,yes,no,Utilities > Locked Reports
+Cancel report,reporting,should,yes,no,Utilities > Report Cancel
+Study-report assignment to doctor,reporting,should,yes,no,Assigned Doctor
+User accounts,admin,must,yes,no,Admin > User
+Roles / permissions,admin,must,yes,no,admin/radiologist/technician
+Organization (multi-org),admin,should,yes,no,Org Type, Create Org
+Departments + job types,admin,should,yes,no,
+Modality registration (AE titles),admin,must,yes,no,New Modality
+Doctor profiles,admin,should,yes,no,referring/assigned/reading
+RIS/HIS integration (HL7),integration,could,yes,no,confirm if present
+Audit log,admin,should,yes,no,confirm if present

@@ -1,0 +1,204 @@
+- generic [ref=f4e3]:
+  - complementary [ref=f4e4]:
+    - generic [ref=f4e5]:
+      - generic [ref=f4e6]: 🩻 RIS·PACS
+      - generic [ref=f4e7]: Enterprise Edition
+    - navigation [ref=f4e8]:
+      - generic [ref=f4e9]:
+        - generic [ref=f4e10]: Overview
+        - link "Dashboard" [ref=f4e11] [cursor=pointer]:
+          - /url: /
+      - generic [ref=f4e12]:
+        - generic [ref=f4e13]: Radiology
+        - link "Worklist" [ref=f4e14] [cursor=pointer]:
+          - /url: /worklist
+        - link "Patients" [ref=f4e15] [cursor=pointer]:
+          - /url: /patients
+        - link "Examination Orders" [ref=f4e16] [cursor=pointer]:
+          - /url: /orders
+      - generic [ref=f4e17]:
+        - generic [ref=f4e18]: PACS
+        - link "PACS Monitoring" [ref=f4e19] [cursor=pointer]:
+          - /url: /pacs/monitor
+        - link "Reception Logs" [ref=f4e20] [cursor=pointer]:
+          - /url: /pacs/reception-logs
+        - link "Reconciliation" [ref=f4e21] [cursor=pointer]:
+          - /url: /pacs/reconciliation
+        - link "Modality Worklist" [ref=f4e22] [cursor=pointer]:
+          - /url: /pacs/mwl
+      - generic [ref=f4e23]:
+        - generic [ref=f4e24]: PACS Operations
+        - link "Reverse Push Monitor" [ref=f4e25] [cursor=pointer]:
+          - /url: /pacs/reverse-push
+        - link "Archive Compression" [ref=f4e26] [cursor=pointer]:
+          - /url: /pacs/archive
+        - link "Storage Management" [ref=f4e27] [cursor=pointer]:
+          - /url: /pacs/storage
+        - link "Transfer & Archive History" [ref=f4e28] [cursor=pointer]:
+          - /url: /pacs/operations/history
+      - generic [ref=f4e29]:
+        - generic [ref=f4e30]: Reporting
+        - link "Reporting Worklist" [ref=f4e31] [cursor=pointer]:
+          - /url: /reporting
+      - generic [ref=f4e32]:
+        - generic [ref=f4e33]: Operations
+        - link "Notifications" [ref=f4e34] [cursor=pointer]:
+          - /url: /notifications
+        - link "System Monitoring" [ref=f4e35] [cursor=pointer]:
+          - /url: /ops/monitoring
+        - link "Alert Management" [ref=f4e36] [cursor=pointer]:
+          - /url: /ops/alerts
+        - link "Audit Logs" [ref=f4e37] [cursor=pointer]:
+          - /url: /ops/audit
+      - generic [ref=f4e38]:
+        - generic [ref=f4e39]: Administration
+        - link "Organizations" [ref=f4e40] [cursor=pointer]:
+          - /url: /admin/organizations
+        - link "Departments" [ref=f4e41] [cursor=pointer]:
+          - /url: /admin/departments
+        - link "Doctors" [ref=f4e42] [cursor=pointer]:
+          - /url: /admin/doctors
+        - link "Users" [ref=f4e43] [cursor=pointer]:
+          - /url: /admin/users
+        - link "Modalities" [ref=f4e44] [cursor=pointer]:
+          - /url: /admin/modalities
+        - link "Report Templates" [ref=f4e45] [cursor=pointer]:
+          - /url: /admin/report-templates
+  - banner [ref=f4e46]:
+    - strong [ref=f4e47]: Administration
+    - generic [ref=f4e48]:
+      - button "Notifications" [ref=f4e50] [cursor=pointer]: 🔔
+      - button "🌙" [ref=f4e51] [cursor=pointer]
+      - generic [ref=f4e52]: admin (super admin)
+      - button "Logout" [ref=f4e53] [cursor=pointer]
+  - main [ref=f4e54]:
+    - generic [ref=f4e55]:
+      - generic [ref=f4e56]:
+        - heading "Transfer & Archive History" [level=1] [ref=f4e57]
+        - generic [ref=f4e58]:
+          - button "Export CSV" [ref=f4e59] [cursor=pointer]
+          - button "Refresh" [ref=f4e60] [cursor=pointer]
+      - generic [ref=f4e61]:
+        - button "DASHBOARD" [ref=f4e62] [cursor=pointer]
+        - button "UNIFIED" [active] [ref=f4e63] [cursor=pointer]
+        - button "REVERSE PUSH" [ref=f4e64] [cursor=pointer]
+        - button "ARCHIVE" [ref=f4e65] [cursor=pointer]
+        - generic [ref=f4e66]: Real records from reverse-push + archive
+      - generic [ref=f4e67]:
+        - button "Today" [ref=f4e68] [cursor=pointer]
+        - button "Last 7 days" [ref=f4e69] [cursor=pointer]
+        - button "Last 30 days" [ref=f4e70] [cursor=pointer]
+        - button "All" [ref=f4e71] [cursor=pointer]
+        - button "Custom" [ref=f4e72] [cursor=pointer]
+      - generic [ref=f4e189]:
+        - textbox "Status" [ref=f4e190]
+        - textbox "Modality" [ref=f4e191]
+        - textbox "Patient MRN" [ref=f4e192]
+        - textbox "Study UID" [ref=f4e193]
+        - textbox "Created by (userId)" [ref=f4e194]
+      - table [ref=f4e196]:
+        - rowgroup [ref=f4e197]:
+          - row [ref=f4e198]:
+            - columnheader "Type" [ref=f4e199] [cursor=pointer]
+            - columnheader "Status" [ref=f4e200] [cursor=pointer]
+            - columnheader "Study UID" [ref=f4e201] [cursor=pointer]
+            - columnheader "Patient" [ref=f4e202] [cursor=pointer]
+            - columnheader "Modality" [ref=f4e203] [cursor=pointer]
+            - columnheader "Summary" [ref=f4e204] [cursor=pointer]
+            - columnheader "Created ▼" [ref=f4e205] [cursor=pointer]
+            - columnheader "Completed" [ref=f4e206] [cursor=pointer]
+        - rowgroup [ref=f4e207]:
+          - row [ref=f4e208] [cursor=pointer]:
+            - cell "ARCHIVE" [ref=f4e209]
+            - cell "VERIFIED" [ref=f4e210]
+            - cell "1.2.826.0.1.3680043.8.498.91470081044676016600634571518134190811" [ref=f4e211]
+            - cell "VIEWERVOL01" [ref=f4e212]
+            - cell "CT" [ref=f4e213]
+            - cell "4.4 MB → 3.3 MB (25.57%)" [ref=f4e214]
+            - cell "11/14/2026, 4:07:05 PM" [ref=f4e215]
+            - cell "11/14/2026, 4:10:34 PM" [ref=f4e216]
+          - row [ref=f4e217] [cursor=pointer]:
+            - cell "ARCHIVE" [ref=f4e218]
+            - cell "CANCELLED" [ref=f4e219]
+            - cell "1.2.826.0.1.3680043.8.498.79046984409264423840184171474939134956" [ref=f4e220]
+            - cell "VIEWERVOL01" [ref=f4e221]
+            - cell "CT" [ref=f4e222]
+            - cell "— → —" [ref=f4e223]
+            - cell "11/14/2026, 4:06:47 PM" [ref=f4e224]
+            - cell "11/14/2026, 4:06:47 PM" [ref=f4e225]
+          - row [ref=f4e226] [cursor=pointer]:
+            - cell "ARCHIVE" [ref=f4e227]
+            - cell "FAILED" [ref=f4e228]
+            - cell "1.2.826.0.1.3680043.8.498.86314780744282731054603380498190972747" [ref=f4e229]
+            - cell "VIEWERVOL01" [ref=f4e230]
+            - cell "CT" [ref=f4e231]
+            - cell "— → —" [ref=f4e232]
+            - cell "11/14/2026, 4:06:22 PM" [ref=f4e233]
+            - cell "11/14/2026, 4:06:25 PM" [ref=f4e234]
+          - row [ref=f4e235] [cursor=pointer]:
+            - cell "ARCHIVE" [ref=f4e236]
+            - cell "VERIFIED" [ref=f4e237]
+            - cell "1.2.826.0.1.3680043.8.498.86314780744282731054603380498190972747" [ref=f4e238]
+            - cell "VIEWERVOL01" [ref=f4e239]
+            - cell "CT" [ref=f4e240]
+            - cell "682.4 KB → 508.7 KB (25.45%)" [ref=f4e241]
+            - cell "11/14/2026, 4:05:39 PM" [ref=f4e242]
+            - cell "11/14/2026, 4:05:44 PM" [ref=f4e243]
+          - row [ref=f4e244] [cursor=pointer]:
+            - cell "PUSH" [ref=f4e245]
+            - cell "COMPLETED" [ref=f4e246]
+            - cell "1.2.826.0.1.3680043.8.498.91470081044676016600634571518134190811" [ref=f4e247]
+            - cell "VIEWERVOL01" [ref=f4e248]
+            - cell "CT" [ref=f4e249]
+            - cell "2000/2000 ok" [ref=f4e250]
+            - cell "11/14/2026, 3:41:25 PM" [ref=f4e251]
+            - cell "11/14/2026, 3:50:47 PM" [ref=f4e252]
+          - row [ref=f4e253] [cursor=pointer]:
+            - cell "PUSH" [ref=f4e254]
+            - cell "CANCELLED" [ref=f4e255]
+            - cell "1.2.826.0.1.3680043.8.498.91470081044676016600634571518134190811" [ref=f4e256]
+            - cell "VIEWERVOL01" [ref=f4e257]
+            - cell "CT" [ref=f4e258]
+            - cell "0/2000 ok" [ref=f4e259]
+            - cell "11/14/2026, 3:41:02 PM" [ref=f4e260]
+            - cell "11/14/2026, 3:41:26 PM" [ref=f4e261]
+          - row [ref=f4e262] [cursor=pointer]:
+            - cell "PUSH" [ref=f4e263]
+            - cell "COMPLETED" [ref=f4e264]
+            - cell "1.2.826.0.1.3680043.8.498.91470081044676016600634571518134190811" [ref=f4e265]
+            - cell "VIEWERVOL01" [ref=f4e266]
+            - cell "CT" [ref=f4e267]
+            - cell "2000/2000 ok" [ref=f4e268]
+            - cell "11/14/2026, 3:39:47 PM" [ref=f4e269]
+            - cell "11/14/2026, 3:41:55 PM" [ref=f4e270]
+          - row [ref=f4e271] [cursor=pointer]:
+            - cell "PUSH" [ref=f4e272]
+            - cell "CANCELLED" [ref=f4e273]
+            - cell "1.2.826.0.1.3680043.8.498.91470081044676016600634571518134190811" [ref=f4e274]
+            - cell "VIEWERVOL01" [ref=f4e275]
+            - cell "CT" [ref=f4e276]
+            - cell "0/2000 ok" [ref=f4e277]
+            - cell "11/14/2026, 3:39:25 PM" [ref=f4e278]
+            - cell "11/14/2026, 3:39:48 PM" [ref=f4e279]
+          - row [ref=f4e280] [cursor=pointer]:
+            - cell "PUSH" [ref=f4e281]
+            - cell "COMPLETED" [ref=f4e282]
+            - cell "1.2.826.0.1.3680043.8.498.79046984409264423840184171474939134956" [ref=f4e283]
+            - cell "VIEWERVOL01" [ref=f4e284]
+            - cell "CT" [ref=f4e285]
+            - cell "150/150 ok" [ref=f4e286]
+            - cell "11/14/2026, 3:38:29 PM" [ref=f4e287]
+            - cell "11/14/2026, 3:38:32 PM" [ref=f4e288]
+          - row [ref=f4e289] [cursor=pointer]:
+            - cell "PUSH" [ref=f4e290]
+            - cell "COMPLETED" [ref=f4e291]
+            - cell "1.2.826.0.1.3680043.8.498.79046984409264423840184171474939134956" [ref=f4e292]
+            - cell "VIEWERVOL01" [ref=f4e293]
+            - cell "CT" [ref=f4e294]
+            - cell "150/150 ok" [ref=f4e295]
+            - cell "11/14/2026, 3:37:49 PM" [ref=f4e296]
+            - cell "11/14/2026, 3:37:54 PM" [ref=f4e297]
+      - generic [ref=f4e298]:
+        - button "Prev" [disabled] [ref=f4e299] [cursor=pointer]
+        - generic [ref=f4e300]: Page 1 / 1 · 10 records
+        - button "Next" [disabled] [ref=f4e301] [cursor=pointer]

@@ -1,0 +1,51 @@
+- generic [ref=e14]:
+  - complementary [ref=e15]:
+    - generic [ref=e16]:
+      - generic [ref=e17]: 🩻 RIS·PACS
+      - generic [ref=e18]: Enterprise Edition
+    - navigation [ref=e19]:
+      - generic [ref=e20]:
+        - generic [ref=e21]: Overview
+        - link "Dashboard" [ref=e22] [cursor=pointer]:
+          - /url: /
+      - generic [ref=e23]:
+        - generic [ref=e24]: Administration
+        - link "Organizations" [ref=e25] [cursor=pointer]:
+          - /url: /admin/organizations
+        - link "Departments" [ref=e26] [cursor=pointer]:
+          - /url: /admin/departments
+        - link "Doctors" [ref=e27] [cursor=pointer]:
+          - /url: /admin/doctors
+        - link "Users" [ref=e28] [cursor=pointer]:
+          - /url: /admin/users
+        - link "Modalities" [ref=e29] [cursor=pointer]:
+          - /url: /admin/modalities
+  - banner [ref=e30]:
+    - strong [ref=e31]: Administration
+    - generic [ref=e32]:
+      - button "🌙" [ref=e33] [cursor=pointer]
+      - generic [ref=e34]: admin (super admin)
+      - button "Logout" [ref=e35] [cursor=pointer]
+  - main [ref=e36]:
+    - generic [ref=e37]:
+      - heading "Administration Dashboard" [level=1] [ref=e39]
+      - generic [ref=e40]:
+        - generic [ref=e41]:
+          - generic [ref=e42]: "1"
+          - generic [ref=e43]: Organizations
+        - generic [ref=e44]:
+          - generic [ref=e45]: "0"
+          - generic [ref=e46]: Departments
+        - generic [ref=e47]:
+          - generic [ref=e48]: "0"
+          - generic [ref=e49]: Doctors
+        - generic [ref=e50]:
+          - generic [ref=e51]: "2"
+          - generic [ref=e52]: Users
+        - generic [ref=e53]:
+          - generic [ref=e54]: "0"
+          - generic [ref=e55]: Modalities
+        - generic [ref=e56]:
+          - generic [ref=e57]: "0"
+          - generic [ref=e58]: Active Modalities
+      - paragraph [ref=e59]: Counts are live from the database. Clinical metrics (studies, reports, worklist) arrive with Phase 3+.

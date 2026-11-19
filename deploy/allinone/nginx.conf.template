@@ -1,0 +1,103 @@
+worker_processes auto;
+events { worker_connections 1024; }
+
+http {
+  include       /etc/nginx/mime.types;
+  default_type  application/octet-stream;
+  sendfile on;
+  client_max_body_size 2g;        # large DICOM uploads (STOW-RS)
+
+  proxy_connect_timeout 5s;
+  proxy_send_timeout    60s;
+  proxy_read_timeout    60s;
+
+  map $http_upgrade $connection_upgrade {
+    default upgrade;
+    ''      close;
+  }
+
+  server {
+    listen __HTTP_PORT__;
+    server_name _;
+
+    location = /health { return 200 "ok\n"; add_header Content-Type text/plain; }
+
+    location /socket.io/ {
+      proxy_pass http://127.0.0.1:3000$request_uri;
+      proxy_http_version 1.1;
+      proxy_set_header Host $host;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header Upgrade $http_upgrade;
+      proxy_set_header Connection $connection_upgrade;
+      proxy_read_timeout 3600s;
+    }
+
+    location /api/dicom-web/ {
+      proxy_pass http://127.0.0.1:3000$request_uri;
+      proxy_http_version 1.1;
+      proxy_set_header Host $host;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto $scheme;
+      proxy_buffering off;
+      proxy_request_buffering off;
+      proxy_read_timeout 300s;
+      client_max_body_size 0;
+    }
+
+    location /api/ {
+      proxy_pass http://127.0.0.1:3000$request_uri;
+      proxy_http_version 1.1;
+      proxy_set_header Host $host;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto $scheme;
+      proxy_set_header Upgrade $http_upgrade;
+      proxy_set_header Connection $connection_upgrade;
+    }
+
+    # No direct, unauthenticated DICOMweb route to Orthanc — see
+    # docs/PRODUCT_VALIDATION_PHASE1C_ORTHANC_DICOMWEB.md. The only DICOMweb
+    # path exposed is /api/dicom-web/ above, which enforces study.view and
+    # audits every access.
+
+    # OHIF is static files in this image (no separate OHIF nginx child
+    # process) — served directly, same as the frontend SPA below.
+    location /viewer/ {
+      alias /opt/www/viewer/;
+      try_files $uri $uri/ /viewer/index.html;
+    }
+
+    # Orthanc Explorer — admin only, gated by Orthanc's own Basic Auth
+    # (ORTHANC__REGISTERED_USERS), never exposed without that credential.
+    location /orthanc/ {
+      rewrite ^/orthanc/(.*)$ /$1 break;
+      proxy_pass http://127.0.0.1:8042;
+      proxy_http_version 1.1;
+      proxy_set_header Host $host;
+      proxy_set_header Authorization $http_authorization;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # supervisord web UI — gated by its own Basic Auth (services_ui user/
+    # password from rispacs.ini), never exposed without that credential.
+    location /admin/services/ {
+      rewrite ^/admin/services/(.*)$ /$1 break;
+      proxy_pass http://127.0.0.1:9001;
+      proxy_http_version 1.1;
+      proxy_set_header Host $host;
+      proxy_set_header Authorization $http_authorization;
+    }
+
+    location / {
+      root /opt/www/frontend;
+      try_files $uri /index.html;
+      add_header X-Frame-Options "SAMEORIGIN" always;
+      add_header X-Content-Type-Options "nosniff" always;
+      add_header Referrer-Policy "no-referrer" always;
+      add_header Content-Security-Policy "default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' ws: wss:; font-src 'self' data:; object-src 'none'; frame-ancestors 'self'; base-uri 'self'" always;
+    }
+  }
+}

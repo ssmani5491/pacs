@@ -1,0 +1,134 @@
+- generic [ref=f3e3]:
+  - complementary [ref=f3e4]:
+    - generic [ref=f3e5]:
+      - generic [ref=f3e6]: 🩻 RIS·PACS
+      - generic [ref=f3e7]: Enterprise Edition
+    - navigation [ref=f3e8]:
+      - generic [ref=f3e9]:
+        - generic [ref=f3e10]: Overview
+        - link "Dashboard" [ref=f3e11] [cursor=pointer]:
+          - /url: /
+      - generic [ref=f3e12]:
+        - generic [ref=f3e13]: Radiology
+        - link "Worklist" [ref=f3e14] [cursor=pointer]:
+          - /url: /worklist
+        - link "Patients" [ref=f3e15] [cursor=pointer]:
+          - /url: /patients
+        - link "Examination Orders" [ref=f3e16] [cursor=pointer]:
+          - /url: /orders
+      - generic [ref=f3e17]:
+        - generic [ref=f3e18]: Administration
+        - link "Organizations" [ref=f3e19] [cursor=pointer]:
+          - /url: /admin/organizations
+        - link "Departments" [ref=f3e20] [cursor=pointer]:
+          - /url: /admin/departments
+        - link "Doctors" [ref=f3e21] [cursor=pointer]:
+          - /url: /admin/doctors
+        - link "Users" [ref=f3e22] [cursor=pointer]:
+          - /url: /admin/users
+        - link "Modalities" [ref=f3e23] [cursor=pointer]:
+          - /url: /admin/modalities
+  - banner [ref=f3e24]:
+    - strong [ref=f3e25]: Administration
+    - generic [ref=f3e26]:
+      - button "🌙" [ref=f3e27] [cursor=pointer]
+      - generic [ref=f3e28]: admin (super admin)
+      - button "Logout" [ref=f3e29] [cursor=pointer]
+  - main [ref=f3e30]:
+    - generic [ref=f3e298]:
+      - generic [ref=f3e299]:
+        - heading "Sita Das (PERF00000001)" [level=1] [ref=f3e300]:
+          - text: Sita Das
+          - generic [ref=f3e301]: (PERF00000001)
+        - button "← Back" [ref=f3e302] [cursor=pointer]
+      - generic [ref=f3e303]:
+        - heading "Demographics" [level=3] [ref=f3e304]
+        - generic [ref=f3e305]:
+          - generic [ref=f3e306]: "Gender: M"
+          - generic [ref=f3e307]: "Age: 37"
+          - generic [ref=f3e308]: "DOB: 9/27/1989"
+          - generic [ref=f3e309]: "Mobile: 9416557840"
+          - generic [ref=f3e310]: "Email: —"
+          - generic [ref=f3e311]: "Status: ACTIVE"
+          - generic [ref=f3e312]: "Referring Dr: —"
+          - generic [ref=f3e313]: "Registered: 11/13/2026"
+      - generic [ref=f3e314]:
+        - heading "Previous Examinations (4)" [level=3] [ref=f3e315]
+        - table [ref=f3e316]:
+          - rowgroup [ref=f3e317]:
+            - row [ref=f3e318]:
+              - columnheader "Accession" [ref=f3e319] [cursor=pointer]
+              - columnheader "Date" [ref=f3e320] [cursor=pointer]
+              - columnheader "Modality" [ref=f3e321] [cursor=pointer]
+              - columnheader "Description" [ref=f3e322] [cursor=pointer]
+              - columnheader "Status" [ref=f3e323] [cursor=pointer]
+              - columnheader "Images" [ref=f3e324] [cursor=pointer]
+          - rowgroup [ref=f3e325]:
+            - row [ref=f3e326]:
+              - cell "PERF00002339" [ref=f3e327]
+              - cell "8/19/2026" [ref=f3e328]
+              - cell "MG" [ref=f3e329]
+              - cell "CT ABDOMEN" [ref=f3e330]
+              - cell "PRELIMINARY" [ref=f3e331]
+              - cell "84" [ref=f3e332]
+            - row [ref=f3e333]:
+              - cell "PERF00004914" [ref=f3e334]
+              - cell "7/4/2026" [ref=f3e335]
+              - cell "CT" [ref=f3e336]
+              - cell "BRAIN MRI" [ref=f3e337]
+              - cell "READY" [ref=f3e338]
+              - cell "295" [ref=f3e339]
+            - row [ref=f3e340]:
+              - cell "PERF00002476" [ref=f3e341]
+              - cell "6/18/2026" [ref=f3e342]
+              - cell "CT" [ref=f3e343]
+              - cell "MAMMOGRAM" [ref=f3e344]
+              - cell "PRELIMINARY" [ref=f3e345]
+              - cell "338" [ref=f3e346]
+            - row [ref=f3e347]:
+              - cell "PERF00002027" [ref=f3e348]
+              - cell "3/8/2026" [ref=f3e349]
+              - cell "CT" [ref=f3e350]
+              - cell "KNEE XRAY" [ref=f3e351]
+              - cell "DRAFT" [ref=f3e352]
+              - cell "434" [ref=f3e353]
+      - generic [ref=f3e354]:
+        - heading "Examination Orders (4)" [level=3] [ref=f3e355]
+        - table [ref=f3e356]:
+          - rowgroup [ref=f3e357]:
+            - row [ref=f3e358]:
+              - columnheader "Accession" [ref=f3e359] [cursor=pointer]
+              - columnheader "Scheduled" [ref=f3e360] [cursor=pointer]
+              - columnheader "Modality" [ref=f3e361] [cursor=pointer]
+              - columnheader "Procedure" [ref=f3e362] [cursor=pointer]
+              - columnheader "Priority" [ref=f3e363] [cursor=pointer]
+              - columnheader "Status" [ref=f3e364] [cursor=pointer]
+          - rowgroup [ref=f3e365]:
+            - row [ref=f3e366]:
+              - cell "PERF00002339" [ref=f3e367]
+              - cell "8/19/2026" [ref=f3e368]
+              - cell "MG" [ref=f3e369]
+              - cell "CT ABDOMEN" [ref=f3e370]
+              - cell "URGENT" [ref=f3e371]
+              - cell "COMPLETED" [ref=f3e372]
+            - row [ref=f3e373]:
+              - cell "PERF00004914" [ref=f3e374]
+              - cell "7/4/2026" [ref=f3e375]
+              - cell "CT" [ref=f3e376]
+              - cell "BRAIN MRI" [ref=f3e377]
+              - cell "ROUTINE" [ref=f3e378]
+              - cell "COMPLETED" [ref=f3e379]
+            - row [ref=f3e380]:
+              - cell "PERF00002476" [ref=f3e381]
+              - cell "6/18/2026" [ref=f3e382]
+              - cell "CT" [ref=f3e383]
+              - cell "MAMMOGRAM" [ref=f3e384]
+              - cell "ROUTINE" [ref=f3e385]
+              - cell "COMPLETED" [ref=f3e386]
+            - row [ref=f3e387]:
+              - cell "PERF00002027" [ref=f3e388]
+              - cell "3/8/2026" [ref=f3e389]
+              - cell "CT" [ref=f3e390]
+              - cell "KNEE XRAY" [ref=f3e391]
+              - cell "ROUTINE" [ref=f3e392]
+              - cell "COMPLETED" [ref=f3e393]

@@ -1,0 +1,129 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - region "Notifications alt+T"
+    - generic [ref=e3]:
+      - generic [ref=e5]:
+        - generic [ref=e7] [cursor=pointer]
+        - generic [ref=e26]:
+          - generic [ref=e28]:
+            - button "Length" [ref=e32] [cursor=pointer]
+            - button [ref=e46] [cursor=pointer]
+          - button "Zoom" [ref=e54] [cursor=pointer]
+          - button "Pan" [ref=e63] [cursor=pointer]
+          - generic [ref=e73]:
+            - button "3D Rotate" [disabled]
+          - button "Window Level" [ref=e77] [cursor=pointer]
+          - button "Capture" [ref=e86] [cursor=pointer]
+          - button "Change layout" [ref=e96] [cursor=pointer]
+          - generic [ref=e111]:
+            - button "Crosshairs" [disabled]
+          - generic [ref=e113]:
+            - button "Reset View" [ref=e117] [cursor=pointer]
+            - button [ref=e125] [cursor=pointer]
+        - generic [ref=e130]:
+          - generic [ref=e131] [cursor=pointer]:
+            - button [ref=e132]
+            - button [ref=e140]
+          - generic [ref=e149] [cursor=pointer]: Patient
+          - button [ref=e165] [cursor=pointer]
+      - generic [ref=e174]:
+        - generic [ref=e176]:
+          - generic [ref=e178] [cursor=pointer]:
+            - img "icon-panel-close-left" [ref=e180]
+            - generic [ref=e186]: Studies
+          - generic [ref=e189]:
+            - img [ref=e192] [cursor=pointer]
+            - group [ref=e201]:
+              - radio "list" [ref=e202] [cursor=pointer]
+              - radio "thumbnails" [checked] [ref=e209] [cursor=pointer]
+          - generic [ref=e221]:
+            - button [ref=e222] [cursor=pointer]:
+              - generic [ref=e223]:
+                - heading [level=3] [ref=e224]:
+                  - button "14-Nov-2026 CT WHOLE BODY LARGE CT 2000" [expanded] [ref=e225]:
+                    - generic [ref=e227]:
+                      - generic [ref=e228]:
+                        - generic [ref=e229]: 14-Nov-2026
+                        - generic [ref=e230]: CT WHOLE BODY LARGE
+                      - generic [ref=e231]:
+                        - generic [ref=e232]: CT
+                        - generic [ref=e233]: "2000"
+                - region "14-Nov-2026 CT WHOLE BODY LARGE CT 2000" [ref=e236]:
+                  - button "CT CT WHOLE BODY LARGE S:1 info-mpr 2000" [ref=e241]:
+                    - generic [ref=e243]:
+                      - generic [ref=e244]: CT
+                      - generic [ref=e251]:
+                        - button "CT WHOLE BODY LARGE" [ref=e252]
+                        - generic [ref=e254]:
+                          - generic [ref=e255]: S:1
+                          - generic [ref=e257]:
+                            - img "info-mpr" [ref=e258]
+                            - generic [ref=e264]: "2000"
+            - button [ref=e265] [cursor=pointer]:
+              - heading [level=3] [ref=e267]:
+                - button "14-Nov-2026 CT CHEST VOLUME CT 300" [ref=e268]:
+                  - generic [ref=e270]:
+                    - generic [ref=e271]:
+                      - generic [ref=e272]: 14-Nov-2026
+                      - generic [ref=e273]: CT CHEST VOLUME
+                    - generic [ref=e274]:
+                      - generic [ref=e275]: CT
+                      - generic [ref=e276]: "300"
+            - button [ref=e279] [cursor=pointer]:
+              - heading [level=3] [ref=e281]:
+                - button "14-Nov-2026 CT CHEST PRIOR CT 150" [ref=e282]:
+                  - generic [ref=e284]:
+                    - generic [ref=e285]:
+                      - generic [ref=e286]: 14-Nov-2026
+                      - generic [ref=e287]: CT CHEST PRIOR
+                    - generic [ref=e288]:
+                      - generic [ref=e289]: CT
+                      - generic [ref=e290]: "150"
+        - separator [ref=e293]
+        - generic [ref=e302]:
+          - generic [ref=e303]:
+            - generic:
+              - slider "Image navigation scrollbar" [ref=e309]
+              - generic:
+                - generic:
+                  - generic:
+                    - generic "Study date": 14-Nov-2026
+                  - generic:
+                    - generic "Series description": CT WHOLE BODY LARGE
+                - generic:
+                  - generic:
+                    - generic "Instance Number": I:1991 (10/2000)
+                - generic:
+                  - generic:
+                    - generic "Window Level":
+                      - generic: "W:"
+                      - generic: "1820"
+                      - generic: "L:"
+                      - generic: "546"
+              - generic:
+                - generic: A
+                - generic: R
+          - generic:
+            - generic [ref=e315]:
+              - button "Orientation" [ref=e319] [cursor=pointer]
+              - button "Data Overlay" [ref=e328] [cursor=pointer]
+            - button "Window Level" [ref=e338] [cursor=pointer]
+        - separator [ref=e348]
+        - generic [ref=e350]:
+          - generic [ref=e351] [cursor=pointer]
+          - generic [ref=e355]:
+            - button [ref=e356] [cursor=pointer]
+            - button [ref=e366] [cursor=pointer]
+      - generic [ref=e375]:
+        - generic [ref=e388]:
+          - generic [ref=e389]: OHIF Viewer is for investigational use only
+          - generic [ref=e390]: Learn more about OHIF Viewer
+        - button "Confirm and hide" [ref=e391] [cursor=pointer]
+  - dialog "Zooming In and Out" [active] [ref=e393]:
+    - generic [ref=e395]:
+      - banner [ref=e396]:
+        - heading "Zooming In and Out" [level=3] [ref=e397]
+      - generic [ref=e398]: You can zoom the images using the right click.
+      - contentinfo [ref=e399]:
+        - button "Skip all" [ref=e400] [cursor=pointer]
+        - generic [ref=e401]: 2/11

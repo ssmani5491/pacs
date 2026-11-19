@@ -1,0 +1,115 @@
+- generic [ref=f3e2]:
+  - region "Notifications alt+T"
+  - generic [ref=f3e3]:
+    - generic [ref=f3e5]:
+      - generic [ref=f3e7] [cursor=pointer]
+      - generic [ref=f3e26]:
+        - generic [ref=f3e28]:
+          - button "Length" [ref=f3e32] [cursor=pointer]
+          - button [ref=f3e46] [cursor=pointer]
+        - button "Zoom" [ref=f3e54] [cursor=pointer]
+        - button "Pan" [ref=f3e63] [cursor=pointer]
+        - generic [ref=f3e73]:
+          - button "3D Rotate" [disabled]
+        - button "Window Level" [ref=f3e77] [cursor=pointer]
+        - button "Capture" [ref=f3e86] [cursor=pointer]
+        - button "Change layout" [ref=f3e96] [cursor=pointer]
+        - generic [ref=f3e111]:
+          - button "Crosshairs" [disabled]
+        - generic [ref=f3e113]:
+          - button "Reset View" [ref=f3e117] [cursor=pointer]
+          - button [ref=f3e125] [cursor=pointer]
+      - generic [ref=f3e130]:
+        - generic [ref=f3e131] [cursor=pointer]:
+          - button [ref=f3e132]
+          - button [ref=f3e140]
+        - generic [ref=f3e149] [cursor=pointer]: Patient
+        - button [ref=f3e165] [cursor=pointer]
+    - generic [ref=f3e174]:
+      - generic [ref=f3e176]:
+        - generic [ref=f3e178] [cursor=pointer]:
+          - img "icon-panel-close-left" [ref=f3e180]
+          - generic [ref=f3e186]: Studies
+        - generic [ref=f3e189]:
+          - img [ref=f3e192] [cursor=pointer]
+          - group [ref=f3e201]:
+            - radio "list" [ref=f3e202] [cursor=pointer]
+            - radio "thumbnails" [checked] [ref=f3e209] [cursor=pointer]
+        - generic [ref=f3e221]:
+          - button [ref=f3e222] [cursor=pointer]:
+            - generic [ref=f3e223]:
+              - heading [level=3] [ref=f3e224]:
+                - button "14-Nov-2026 CT WHOLE BODY LARGE CT 2000" [expanded] [ref=f3e225]:
+                  - generic [ref=f3e227]:
+                    - generic [ref=f3e228]:
+                      - generic [ref=f3e229]: 14-Nov-2026
+                      - generic [ref=f3e230]: CT WHOLE BODY LARGE
+                    - generic [ref=f3e231]:
+                      - generic [ref=f3e232]: CT
+                      - generic [ref=f3e233]: "2000"
+              - region "14-Nov-2026 CT WHOLE BODY LARGE CT 2000" [ref=f3e236]:
+                - button "CT CT WHOLE BODY LARGE S:1 info-mpr 2000" [ref=f3e241]:
+                  - generic [ref=f3e243]:
+                    - generic [ref=f3e244]: CT
+                    - generic [ref=f3e251]:
+                      - button "CT WHOLE BODY LARGE" [ref=f3e252]
+                      - generic [ref=f3e254]:
+                        - generic [ref=f3e255]: S:1
+                        - generic [ref=f3e257]:
+                          - img "info-mpr" [ref=f3e258]
+                          - generic [ref=f3e264]: "2000"
+          - button [ref=f3e265] [cursor=pointer]:
+            - heading [level=3] [ref=f3e267]:
+              - button "14-Nov-2026 CT CHEST VOLUME CT 300" [ref=f3e268]:
+                - generic [ref=f3e270]:
+                  - generic [ref=f3e271]:
+                    - generic [ref=f3e272]: 14-Nov-2026
+                    - generic [ref=f3e273]: CT CHEST VOLUME
+                  - generic [ref=f3e274]:
+                    - generic [ref=f3e275]: CT
+                    - generic [ref=f3e276]: "300"
+          - button [ref=f3e279] [cursor=pointer]:
+            - heading [level=3] [ref=f3e281]:
+              - button "14-Nov-2026 CT CHEST PRIOR CT 150" [ref=f3e282]:
+                - generic [ref=f3e284]:
+                  - generic [ref=f3e285]:
+                    - generic [ref=f3e286]: 14-Nov-2026
+                    - generic [ref=f3e287]: CT CHEST PRIOR
+                  - generic [ref=f3e288]:
+                    - generic [ref=f3e289]: CT
+                    - generic [ref=f3e290]: "150"
+      - separator [ref=f3e293]
+      - generic [ref=f3e302]:
+        - generic [ref=f3e303]:
+          - generic:
+            - slider "Image navigation scrollbar" [ref=f3e309]
+            - generic:
+              - generic:
+                - generic:
+                  - generic "Study date": 14-Nov-2026
+                - generic:
+                  - generic "Series description": CT WHOLE BODY LARGE
+              - generic:
+                - generic:
+                  - generic "Instance Number": I:2000 (1/2000)
+              - generic:
+                - generic:
+                  - generic "Window Level":
+                    - generic: "W:"
+                    - generic: "400"
+                    - generic: "L:"
+                    - generic: "40"
+            - generic:
+              - generic: A
+              - generic: R
+        - generic:
+          - generic [ref=f3e317]:
+            - button "Orientation" [ref=f3e321] [cursor=pointer]
+            - button "Data Overlay" [ref=f3e330] [cursor=pointer]
+          - button "Window Level" [ref=f3e340] [cursor=pointer]
+      - separator [ref=f3e350]
+      - generic [ref=f3e352]:
+        - generic [ref=f3e353] [cursor=pointer]
+        - generic [ref=f3e357]:
+          - button [ref=f3e358] [cursor=pointer]
+          - button [ref=f3e368] [cursor=pointer]

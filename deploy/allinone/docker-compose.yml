@@ -1,0 +1,81 @@
+# RIS + PACS — all-in-one production deployment.
+# Two services: postgres (its own container, same image the dev stack uses)
+# and rispacs (everything else, under supervisord — see Dockerfile.allinone).
+#
+# Usage:
+#   cp rispacs.ini.example rispacs.ini          # then edit it
+#   cp db_password.txt.example db_password.txt  # then edit it
+#   docker compose up -d
+#
+# This file is independent of the project root's docker-compose.yml (the dev
+# stack) — the two never run against the same data and are not meant to.
+
+name: rispacs
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: pacs
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+      POSTGRES_DB: ris
+      ORTHANC_DB_NAME: orthanc
+    secrets:
+      - db_password
+    volumes:
+      - ${RISPACS_DATA_DIR:-./data}/postgres:/var/lib/postgresql/data
+      - ../../scripts/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh:ro
+    # Not published to the host by default. Uncomment for an admin tool
+    # (pgAdmin, psql from the host) — bind to 127.0.0.1 only, never 0.0.0.0.
+    # ports:
+    #   - "127.0.0.1:5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pacs -d ris"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    stop_grace_period: 60s
+    networks: [rispacs-net]
+
+  rispacs:
+    image: ourcompany/rispacs:${RISPACS_VERSION:-latest}
+    build:
+      context: ../..
+      dockerfile: Dockerfile.allinone
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+    secrets:
+      - db_password
+    volumes:
+      - ${RISPACS_DATA_DIR:-./data}/dicom:/data/dicom
+      - ${RISPACS_DATA_DIR:-./data}/archive:/data/archive
+      - ${RISPACS_DATA_DIR:-./data}/backups:/data/backups
+      - ${RISPACS_DATA_DIR:-./data}/logs:/data/logs
+      - ${RISPACS_DATA_DIR:-./data}/redis:/data/redis
+      - ${RISPACS_DATA_DIR:-./data}/config:/data/config
+      - ${RISPACS_INI_FILE:-./rispacs.ini}:/etc/rispacs/rispacs.ini:ro
+    ports:
+      - "${RISPACS_HTTP_PORT:-80}:80"
+      - "${RISPACS_DICOM_PORT:-4242}:4242"
+      - "${RISPACS_MWL_PORT:-4243}:4243"
+    healthcheck:
+      test: ["CMD", "bash", "-c", "curl -fsS http://127.0.0.1/health && curl -fsS http://127.0.0.1/api/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+    networks: [rispacs-net]
+
+secrets:
+  db_password:
+    file: ${RISPACS_DB_PASSWORD_FILE:-./db_password.txt}
+
+networks:
+  rispacs-net:
+    driver: bridge

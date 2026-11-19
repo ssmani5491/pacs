@@ -1,0 +1,36 @@
+# secrets / env
+.env
+*.local
+# rotated test-account credentials (F-02 remediation) — never commit
+tests/.credentials.local
+
+# node
+node_modules/
+dist/
+build/
+.vite/
+coverage/
+*.log
+
+# prisma
+backend/prisma/*.db
+
+# docker volumes (if bind-mounted locally)
+data/
+backups/
+
+# DICOM / PHI — never commit images or real data
+*.dcm
+seed/dicom/*.dcm
+replica/screens/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# all-in-one deployment secrets
+deploy/allinone/db_password.txt
+deploy/allinone/rispacs.ini
+deploy/allinone/data/
+deploy/allinone/test-data/
+dist/

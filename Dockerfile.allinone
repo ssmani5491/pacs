@@ -1,0 +1,148 @@
+# RIS + PACS — "rispacs" application image.
+#
+# Ships every service EXCEPT Postgres (Redis, Orthanc, backend, mwl-scp,
+# nginx, frontend, OHIF) inside one container under supervisord. Postgres
+# runs in its own sibling container (see deploy/allinone/docker-compose.yml)
+# — the exact postgres:16-alpine image the dev stack already uses, so an
+# existing data directory can be reused directly without a musl/glibc
+# collation mismatch. Hospital IT runs `docker compose up -d` in
+# deploy/allinone/ with one rispacs.ini config file and one data folder.
+# See deploy/allinone/README.md for the operator-facing guide.
+#
+# This file does NOT replace the root docker-compose.yml, which remains the
+# dev setup and is unaffected by anything in deploy/allinone/.
+
+ARG ORTHANC_TAG=25.12.3
+ARG OHIF_REF=v3.13.14
+ARG NODE_VERSION=24-slim
+ARG PG_MAJOR=16
+
+# Named stage so the final stage can COPY --from=node-runtime without
+# unsupported ARG expansion inside a --from reference.
+FROM node:${NODE_VERSION} AS node-runtime
+
+# ───────────────────────── Stage: frontend (static build) ─────────────────
+FROM node:${NODE_VERSION} AS frontend-build
+WORKDIR /app
+COPY frontend/package*.json ./
+RUN npm install
+COPY frontend/ ./
+RUN npm run build
+# dist/ contains the SPA, built with only relative /api paths (portable).
+
+# ───────────────────────── Stage: OHIF (static build) ──────────────────────
+FROM node:${NODE_VERSION} AS ohif-build
+WORKDIR /src
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      build-essential python3 git ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+RUN npm install -g pnpm@12
+ARG OHIF_REF
+ARG PUBLIC_URL=/viewer/
+ENV PUBLIC_URL=${PUBLIC_URL}
+ENV QUICK_BUILD=true
+ENV NODE_OPTIONS=--max-old-space-size=4096
+RUN git clone --depth 1 --branch ${OHIF_REF} https://github.com/OHIF/Viewers.git .
+RUN pnpm install --no-frozen-lockfile
+RUN pnpm run build
+# platform/app/dist contains the OHIF SPA, pre-baked for /viewer/ (path prefix
+# only — independent of hostname, so this is portable per Phase 1 discovery).
+
+# ───────────────────────── Stage: backend (build) ──────────────────────────
+FROM node:${NODE_VERSION} AS backend-build
+WORKDIR /app
+RUN apt-get update && apt-get install -y --no-install-recommends openssl \
+    && rm -rf /var/lib/apt/lists/*
+COPY backend/package*.json ./
+RUN npm ci
+COPY backend/prisma ./prisma
+# debian-openssl-3.0.x binary target (added to schema.prisma for this image;
+# linux-musl-openssl-3.0.x, used by the existing Alpine dev image, is untouched).
+RUN npx prisma generate
+COPY backend/tsconfig.json backend/nest-cli.json ./
+COPY backend/src ./src
+RUN npm run build
+
+# ───────────────────────── Final stage: everything ──────────────────────────
+# Based on the pinned orthancteam/orthanc image (Ubuntu/glibc-based — see
+# deploy/allinone/README.md for why this tag was chosen) so Orthanc and its
+# PostgreSQL/DICOMweb/Worklists/GDCM plugins are already correctly installed.
+FROM orthancteam/orthanc:${ORTHANC_TAG} AS final
+ARG PG_MAJOR
+ARG NODE_VERSION
+
+# --- Node.js runtime (same major version as the dev backend image) ---------
+COPY --from=node-runtime /usr/local/bin/node /usr/local/bin/node
+COPY --from=node-runtime /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/npm
+RUN ln -sf /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm \
+    && ln -sf /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx
+
+# --- PostgreSQL 16 CLIENT ONLY from the official PGDG apt repo (matches the
+#     sibling postgres container's major version exactly). No server package
+#     — Postgres itself runs in its own container. The client provides
+#     pg_dump/pg_restore/psql/pg_isready, needed by the backend's own nightly
+#     backup feature (Product Validation Phase 1D, reused not duplicated) and
+#     by wait-for-postgres.sh. ------------------------------------------------
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      curl ca-certificates gnupg lsb-release python3 python3-venv python3-pip \
+      supervisor nginx dcmtk procps redis-server \
+    && install -d /usr/share/postgresql-common/pgdg \
+    && curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc \
+      -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc \
+    && echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" \
+      > /etc/apt/sources.list.d/pgdg.list \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends postgresql-client-${PG_MAJOR} \
+    && rm -rf /var/lib/apt/lists/*
+ENV PATH="/usr/lib/postgresql/${PG_MAJOR}/bin:${PATH}"
+
+# --- mwl-scp: its own Python venv, NOT the Orthanc image's system Python ----
+RUN python3 -m venv /opt/mwl-venv
+COPY mwl-scp/requirements.txt /opt/mwl-src/requirements.txt
+RUN /opt/mwl-venv/bin/pip install --no-cache-dir -r /opt/mwl-src/requirements.txt
+COPY mwl-scp/mwl_scp.py /opt/mwl-src/mwl_scp.py
+
+# --- backend runtime (production deps only) ---------------------------------
+WORKDIR /opt/backend
+COPY backend/package*.json ./
+COPY backend/prisma ./prisma
+RUN npm ci --omit=dev && npx prisma generate
+COPY --from=backend-build /app/dist ./dist
+COPY --from=backend-build /app/src ./src
+# Reuses the existing dev image's entrypoint (migrate deploy -> seed -> start)
+# unchanged, rather than reimplementing that sequence here.
+COPY backend/docker-entrypoint.sh ./docker-entrypoint.sh
+RUN chmod +x ./docker-entrypoint.sh
+
+# --- static frontend + OHIF --------------------------------------------------
+RUN mkdir -p /opt/www/frontend /opt/www/viewer
+COPY --from=frontend-build /app/dist /opt/www/frontend
+COPY --from=ohif-build /src/platform/app/dist /opt/www/viewer
+
+# --- allinone deploy assets --------------------------------------------------
+COPY deploy/allinone/supervisord.conf /etc/supervisor/supervisord.conf
+COPY deploy/allinone/entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY deploy/allinone/scripts/wait-for-postgres.sh /usr/local/bin/wait-for-postgres.sh
+COPY deploy/allinone/scripts/run-mwl-scp.sh /usr/local/bin/run-mwl-scp.sh
+COPY deploy/allinone/scripts/run-backend.sh /usr/local/bin/run-backend.sh
+COPY deploy/allinone/nginx.conf.template /etc/rispacs/nginx.conf.template
+COPY deploy/allinone/rispacs.ini.example /etc/rispacs/rispacs.ini.example
+COPY orthanc/on-stored.lua /etc/rispacs/on-stored.lua
+RUN chmod +x /usr/local/bin/entrypoint.sh /usr/local/bin/wait-for-postgres.sh /usr/local/bin/run-mwl-scp.sh /usr/local/bin/run-backend.sh
+
+# Orthanc's own default config/entrypoint (/docker-entrypoint.sh) are reused
+# unchanged — see supervisord.conf's [program:orthanc]. Only the default
+# /etc/orthanc/orthanc.json is removed so stray values from the base image
+# never compete with the ORTHANC__* env vars our entrypoint.sh sets.
+RUN rm -f /etc/orthanc/orthanc.json 2>/dev/null || true
+
+EXPOSE 80 4242 4243
+
+# nginx /health (always 200), backend /api/health (checks its own Postgres
+# connection), and a bare TCP connect to Orthanc's HTTP port (liveness only —
+# no credential needed just to confirm the port accepts connections, same
+# approach the dev Compose orthanc healthcheck already uses).
+HEALTHCHECK --interval=15s --timeout=5s --retries=10 --start-period=60s \
+  CMD bash -c 'curl -fsS http://127.0.0.1/health && curl -fsS http://127.0.0.1/api/health && (exec 3<>/dev/tcp/127.0.0.1/8042)' || exit 1
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

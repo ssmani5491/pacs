@@ -1,0 +1,472 @@
+:root {
+  /* ---- surfaces & text (existing, unchanged values) ---- */
+  --bg: #f4f6f9; --panel: #ffffff; --panel-2: #f8fafc; --border: #e2e8f0;
+  --text: #1e293b; --muted: #64748b; --primary: #2563eb; --primary-600: #1d4ed8;
+  --danger: #dc2626; --ok: #16a34a; --warn: #d97706;
+  --ready: #2563eb; --draft: #64748b; --prelim: #d97706; --final: #16a34a;
+  --radius: 8px; --shadow: 0 1px 3px rgba(0,0,0,.08);
+
+  /* ---- Phase 2: formalised status palette ----------------------------------
+   * Consolidates every status/health/classification colour already in use
+   * across the app (Command Centre, Exceptions Console, SystemMonitoring, the
+   * worklist's --ready/--draft/--prelim/--final) into one named set, so a
+   * single shared <StatusBadge> can render any of them consistently. No
+   * colour value changes — every hex below is copied from an existing,
+   * already-shipped usage (Phase 1 audit, components.tsx/pages inspected
+   * directly), not invented. */
+  --status-success: #16a34a;   /* COMPLETED / VERIFIED / FINAL / HEALTHY / SUCCESS / MATCHED / INGESTED / RESOLVED */
+  --status-danger: #ef4444;    /* FAILED / DOWN / CANCELLED(off-path) / REJECTED */
+  --status-warning: #f59e0b;   /* PARTIALLY_COMPLETED / DEGRADED / PRELIMINARY / NO_MATCH / ORPHAN / ACKNOWLEDGED */
+  --status-info: #3b82f6;      /* RUNNING / QUEUED / READY / OPEN(alert) */
+  --status-neutral: #6b7280;   /* CANCELLED / PENDING / UNKNOWN / DRAFT / off */
+  --status-indigo: #6366f1;    /* REVERSE_PUSH (type) / INFRASTRUCTURE (class) */
+  --status-cyan: #0ea5e9;      /* ARCHIVE (type) */
+  --status-heuristic: #b45309; /* HEURISTIC (class) — darker amber for text-on-light contrast, matches the existing Exceptions Console value exactly */
+
+  /* ---- Phase 2: type scale (formalises the ad hoc font-size values already
+   * in use: 11/12/13/14/16/20/22/26/30px all appear today; this names the
+   * same sizes instead of adding new ones) ---- */
+  --font-xs: 11px; --font-sm: 12px; --font-base: 13px; --font-md: 14px;
+  --font-lg: 16px; --font-xl: 20px; --font-2xl: 22px; --font-3xl: 26px; --font-4xl: 30px;
+
+  /* ---- Phase 2: spacing scale (4px base, matching the most common existing
+   * ad hoc values: 4/8/12/16/24 all already appear throughout the app) ---- */
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+  --space-5: 20px; --space-6: 24px; --space-8: 32px;
+
+  /* ---- Phase 2: radii & shadows (names the two radii already in use: the
+   * existing --radius=8px for cards/modals, and the pill radius already used
+   * by every .badge) ---- */
+  --radius-sm: 6px; --radius-pill: 999px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.08);
+}
+[data-theme="dark"] {
+  --bg: #0f172a; --panel: #1e293b; --panel-2: #273449; --border: #334155;
+  --text: #e2e8f0; --muted: #94a3b8; --primary: #3b82f6; --primary-600: #2563eb;
+  /* Status colours intentionally unchanged in dark mode: every existing
+   * Module 4/5 page already renders these same hex values on var(--panel)
+   * unchanged between themes (confirmed by reading OperationsExceptions.tsx
+   * etc.) — dark-mode badges already work today via a fixed 22/55-alpha
+   * overlay on --panel, which this phase preserves rather than altering. */
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  background: var(--bg); color: var(--text); font-size: 14px; }
+a { color: var(--primary); text-decoration: none; }
+
+/* layout */
+.app { display: grid; grid-template-columns: 240px 1fr; grid-template-rows: 56px 1fr;
+  grid-template-areas: "sidebar topbar" "sidebar main"; height: 100vh;
+  transition: grid-template-columns .15s ease; }
+.sidebar { grid-area: sidebar; background: var(--panel); border-right: 1px solid var(--border);
+  overflow-y: auto; display: flex; flex-direction: column; }
+.topbar { grid-area: topbar; background: var(--panel); border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between; padding: 0 20px; }
+.main { grid-area: main; overflow-y: auto; padding: 24px; min-width: 0; }
+.brand { padding: 16px 18px; font-weight: 700; font-size: 16px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 8px; }
+.brand small { font-weight: 400; color: var(--muted); display:block; font-size: 11px; }
+.nav { padding: 8px; flex: 1; }
+.nav-section { color: var(--muted); font-size: 11px; text-transform: uppercase;
+  padding: 12px 12px 4px; letter-spacing: .5px; }
+.nav a { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 6px;
+  color: var(--text); margin: 1px 0; }
+.nav a.active, .nav a:hover { background: var(--panel-2); color: var(--primary); }
+.nav-icon { flex: none; font-size: 15px; line-height: 1; }
+.nav-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ---- Phase 8A: sidebar collapse (desktop icon-only) + mobile drawer -------
+ * Root-cause fix for the Phase 7 audit finding: .app's sidebar column was a
+ * fixed 240px at every breakpoint, with no mobile alternative, which is why
+ * all 25 routes overflowed horizontally at 390px. The desktop collapse is an
+ * added convenience; the ≤640px rule below is what actually removes the
+ * always-reserved 240px column that caused the overflow. */
+.sidebar-collapse-btn { border: none; border-top: 1px solid var(--border); background: var(--panel);
+  color: var(--muted); padding: 10px; cursor: pointer; font-size: 12px; text-align: center; }
+.sidebar-collapse-btn:hover { background: var(--panel-2); color: var(--primary); }
+.hamburger-btn { display: none; border: 1px solid var(--border); background: var(--panel);
+  color: var(--text); width: 32px; height: 32px; border-radius: 6px; cursor: pointer; font-size: 16px; }
+.hamburger-btn:hover { background: var(--panel-2); }
+.drawer-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 50;
+  display: flex; }
+.drawer { width: 260px; max-width: 85vw; height: 100%; background: var(--panel);
+  border-right: 1px solid var(--border); overflow-y: auto; display: flex; flex-direction: column;
+  box-shadow: var(--shadow-sm); }
+.drawer .brand { position: relative; }
+.drawer-close-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+  border: 1px solid var(--border); background: var(--panel); color: var(--text); width: 28px;
+  height: 28px; border-radius: 6px; cursor: pointer; font-size: 13px; }
+.drawer-close-btn:hover { background: var(--panel-2); }
+
+.app.sidebar-collapsed { grid-template-columns: 64px 1fr; }
+.app.sidebar-collapsed .nav a { justify-content: center; }
+.app.sidebar-collapsed .brand { justify-content: center; padding: 16px 8px; }
+
+@media (max-width: 640px) {
+  /* The sidebar column is removed from the grid entirely — the app becomes a
+   * single-column layout, and the sidebar itself is hidden (it only reappears
+   * as the off-canvas drawer below). This is what actually eliminates the
+   * fixed-240px overflow at mobile width, independent of collapse state. */
+  .app, .app.sidebar-collapsed { grid-template-columns: 1fr; grid-template-areas: "topbar" "main"; }
+  .sidebar { display: none; }
+  .sidebar-collapse-btn { display: none; }
+  .hamburger-btn { display: inline-flex; align-items: center; justify-content: center; }
+}
+
+/* components */
+.btn { border: 1px solid var(--border); background: var(--panel); color: var(--text);
+  padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; }
+.btn:hover { background: var(--panel-2); }
+.btn.primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+.btn.primary:hover { background: var(--primary-600); }
+.btn.danger { color: var(--danger); border-color: var(--danger); }
+.btn.sm { padding: 4px 10px; font-size: 12px; }
+.card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
+  box-shadow: var(--shadow); padding: 20px; }
+.page-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.page-head h1 { font-size: 20px; margin: 0; }
+input, select { width: 100%; padding: 8px 10px; border: 1px solid var(--border);
+  border-radius: 6px; background: var(--panel); color: var(--text); font-size: 13px; }
+label { display: block; font-size: 12px; color: var(--muted); margin: 10px 0 4px; }
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); }
+th { font-size: 12px; color: var(--muted); text-transform: uppercase; cursor: pointer; user-select: none; }
+tbody tr:hover { background: var(--panel-2); }
+.badge { padding: 2px 10px; border-radius: var(--radius-pill); font-size: var(--font-sm); font-weight: 500; }
+.badge.ok { background: rgba(22,163,74,.12); color: var(--ok); }
+.badge.off { background: rgba(100,116,139,.15); color: var(--muted); }
+/* Phase 2 fix: these four classes were referenced by several pages
+ * (Worklist, AlertManagement, MwlMonitor, ReceptionLogs, ReportingWorklist)
+ * via className={`badge ${STATUS_CLASS[x]}`} but had NO matching CSS rule,
+ * so those badges rendered with no colour at all — confirmed by reading this
+ * file in the Phase 1 audit. Wired here to the --ready/--draft/--prelim/
+ * --final variables that already existed in :root for exactly this purpose,
+ * restoring the colours those pages' own code already intended, not adding
+ * new ones. */
+.badge.ready { background: rgba(37,99,235,.12); color: var(--ready); }
+.badge.draft { background: rgba(100,116,139,.15); color: var(--draft); }
+.badge.prelim { background: rgba(217,119,6,.12); color: var(--prelim); }
+.badge.final { background: rgba(22,163,74,.12); color: var(--final); }
+/* Shared <StatusBadge> variants (Phase 2) — the component applies one of
+ * these instead of each page writing its own inline style. */
+.badge.status-success { background: color-mix(in srgb, var(--status-success) 15%, transparent); color: var(--status-success); border: 1px solid color-mix(in srgb, var(--status-success) 35%, transparent); }
+.badge.status-danger { background: color-mix(in srgb, var(--status-danger) 15%, transparent); color: var(--status-danger); border: 1px solid color-mix(in srgb, var(--status-danger) 35%, transparent); }
+.badge.status-warning { background: color-mix(in srgb, var(--status-warning) 15%, transparent); color: var(--status-warning); border: 1px solid color-mix(in srgb, var(--status-warning) 35%, transparent); }
+.badge.status-info { background: color-mix(in srgb, var(--status-info) 15%, transparent); color: var(--status-info); border: 1px solid color-mix(in srgb, var(--status-info) 35%, transparent); }
+.badge.status-neutral { background: color-mix(in srgb, var(--status-neutral) 15%, transparent); color: var(--status-neutral); border: 1px solid color-mix(in srgb, var(--status-neutral) 35%, transparent); }
+.badge.status-indigo { background: color-mix(in srgb, var(--status-indigo) 15%, transparent); color: var(--status-indigo); border: 1px solid color-mix(in srgb, var(--status-indigo) 35%, transparent); }
+.badge.status-cyan { background: color-mix(in srgb, var(--status-cyan) 15%, transparent); color: var(--status-cyan); border: 1px solid color-mix(in srgb, var(--status-cyan) 35%, transparent); }
+.badge.status-heuristic { background: color-mix(in srgb, var(--status-warning) 15%, transparent); color: var(--status-heuristic); border: 1px solid color-mix(in srgb, var(--status-warning) 35%, transparent); }
+.badge.status-dot { padding: 0; background: none; border: none; display: inline-flex; align-items: center; gap: var(--space-2); font-weight: 400; }
+.badge.status-dot::before { content: ''; display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: currentColor; }
+.toolbar { display: flex; gap: 8px; margin-bottom: 14px; align-items: center; }
+.toolbar input { max-width: 280px; }
+.pager { display: flex; gap: 6px; align-items: center; justify-content: flex-end; margin-top: 14px; }
+.error { background: rgba(220,38,38,.1); color: var(--danger); padding: 10px 12px;
+  border-radius: 6px; margin: 10px 0; font-size: 13px; }
+.success { background: rgba(22,163,74,.1); color: var(--ok); padding: 10px 12px;
+  border-radius: 6px; margin: 10px 0; font-size: 13px; }
+.modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,.4); display: flex;
+  align-items: center; justify-content: center; z-index: 50; }
+.modal { background: var(--panel); border-radius: var(--radius); padding: 24px; width: 480px;
+  max-width: 92vw; max-height: 90vh; overflow-y: auto; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); gap: 16px; }
+.stat { font-size: 30px; font-weight: 700; }
+.stat-label { color: var(--muted); font-size: 13px; }
+
+/* login */
+.login-wrap { height: 100vh; display: flex; align-items: center; justify-content: center; }
+.login-card { width: 360px; }
+.muted { color: var(--muted); }
+.row-actions { display: flex; gap: 6px; }
+
+/* ---- Phase 3: dashboard --------------------------------------------------
+ * Scoped to the dashboard page only (and the shared KpiCard component it
+ * uses) — the sidebar/worklist grid and layout are explicitly untouched. */
+.kpi-card { padding: var(--space-4); }
+.kpi-card-label { color: var(--muted); font-size: var(--font-sm); display: flex; align-items: center; gap: var(--space-1); margin-bottom: var(--space-1); }
+.kpi-card-icon { font-size: var(--font-lg); }
+.kpi-card-value { font-size: var(--font-3xl); font-weight: 700; line-height: 1.1; }
+.kpi-card-sub { color: var(--muted); font-size: var(--font-xs); margin-top: var(--space-1); }
+
+.dash-section { margin-top: var(--space-6); }
+.dash-section-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: var(--space-3); }
+.dash-section-head h2 { font-size: var(--font-lg); margin: 0; }
+
+/* KPI row: desktop default — up to 5 cards per row, min 180px each. */
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--space-4); }
+
+/* Two-column layout for the stats + operational-summary panels. */
+.dash-columns { display: grid; grid-template-columns: 1.3fr 1fr; gap: var(--space-4); align-items: start; }
+
+.quick-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: var(--space-3); }
+.quick-action { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-1); padding: var(--space-4);
+  text-align: left; background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
+  box-shadow: var(--shadow-sm); cursor: pointer; color: var(--text); transition: border-color .15s, box-shadow .15s; }
+.quick-action:hover { border-color: var(--primary); box-shadow: 0 2px 8px rgba(37,99,235,.12); }
+.quick-action-icon { font-size: var(--font-xl); }
+.quick-action-label { font-weight: 600; font-size: var(--font-md); }
+.quick-action-sub { color: var(--muted); font-size: var(--font-xs); }
+
+.mini-list { display: flex; flex-direction: column; gap: var(--space-2); }
+.mini-list-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2);
+  padding: var(--space-2) 0; border-bottom: 1px solid var(--border); font-size: var(--font-base); }
+.mini-list-row:last-child { border-bottom: none; }
+.mini-list-empty { color: var(--muted); font-size: var(--font-base); padding: var(--space-3) 0; }
+
+.bar-chart { display: flex; flex-direction: column; gap: var(--space-2); }
+.bar-chart-row { display: grid; grid-template-columns: 70px 1fr 40px; align-items: center; gap: var(--space-2); font-size: var(--font-sm); }
+.bar-chart-track { background: var(--panel-2); border-radius: var(--radius-sm); height: 10px; overflow: hidden; }
+.bar-chart-fill { height: 100%; background: var(--primary); border-radius: var(--radius-sm); }
+
+/* ---- Responsive: dashboard only ---- */
+@media (max-width: 1024px) {
+  .kpi-grid { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+  .dash-columns { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-2); }
+  .kpi-card-value { font-size: var(--font-2xl); }
+  .quick-actions { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ---- Phase 4: worklist ----------------------------------------------------
+ * Scoped to the RIS Worklist page only — the sidebar/topbar and the shared
+ * table base rules above are untouched; these classes only apply inside the
+ * worklist's own table and its mobile card fallback. */
+.wl-head-row { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); margin-bottom: var(--space-1); }
+.wl-head-row p { margin: 0; color: var(--muted); font-size: var(--font-sm); }
+.wl-head-meta { display: flex; align-items: center; gap: var(--space-3); color: var(--muted); font-size: var(--font-sm); white-space: nowrap; }
+
+.wl-table col.wl-col-expand { width: 32px; }
+.wl-table col.wl-col-actions { width: 1%; white-space: nowrap; }
+.wl-table td.wl-expand-toggle { text-align: center; padding: 10px 4px; }
+.wl-expand-btn { background: none; border: none; cursor: pointer; color: var(--muted); font-size: var(--font-md); line-height: 1; padding: 4px; border-radius: var(--radius-sm); }
+.wl-expand-btn:hover { background: var(--panel-2); color: var(--text); }
+
+.wl-patient-name { font-weight: 600; }
+.wl-patient-id { color: var(--muted); font-size: var(--font-xs); }
+
+.wl-study-desc { color: var(--muted); font-size: var(--font-sm); max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.wl-detail-row td { background: var(--panel-2); padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--border); }
+.wl-detail-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: var(--space-3); font-size: var(--font-sm); }
+.wl-detail-grid div span { display: block; color: var(--muted); font-size: var(--font-xs); margin-bottom: 2px; }
+
+/* Mobile card list — replaces the table entirely below 640px. */
+.wl-cards { display: none; }
+.wl-card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-sm); padding: var(--space-4); margin-bottom: var(--space-3); }
+.wl-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-2); margin-bottom: var(--space-2); }
+.wl-card-row { display: flex; justify-content: space-between; gap: var(--space-2); font-size: var(--font-sm); padding: 4px 0; }
+.wl-card-row span:first-child { color: var(--muted); }
+.wl-card-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: var(--space-3); }
+
+@media (max-width: 1024px) {
+  .wl-study-desc { max-width: 100px; }
+  /* At tablet width the full column set doesn't fit beside the sidebar
+     without horizontal scroll. Keep Patient / Modality+Description / Status /
+     Actions visible; Study Date, Accession, Assigned and Images move into the
+     expandable detail row (still one tap away, never removed — Accession also
+     stays searchable via the always-visible Accession No filter above). */
+  .wl-table th:nth-child(3), .wl-table td:nth-child(3),
+  .wl-table th:nth-child(4), .wl-table td:nth-child(4),
+  .wl-table th:nth-child(6), .wl-table td:nth-child(6),
+  .wl-table th:nth-child(8), .wl-table td:nth-child(8) { display: none; }
+  /* Actions is the widest cell (full-text buttons); wrap and shrink it so
+     the row fits without horizontal scroll. */
+  .wl-table .row-actions { flex-direction: column; gap: 4px; align-items: stretch; }
+  .wl-table .row-actions .btn { padding: 4px 8px; font-size: var(--font-xs); }
+  .wl-table th, .wl-table td { padding: 8px; }
+  .wl-table .wl-patient-id { font-size: 10px; }
+}
+@media (max-width: 640px) {
+  .wl-table-wrap { display: none; }
+  .wl-cards { display: block; }
+  .wl-head-row { flex-direction: column; align-items: flex-start; }
+}
+
+/* ---- Phase 6A: patient management -----------------------------------------
+ * Scoped to the Patients list/registration/details pages only. Patients.tsx
+ * and PatientDetails.tsx are now bespoke pages (not CrudPage) so these rules
+ * never touch the shared CrudPage/DataTable used by the admin CRUD pages. */
+.pm-head-row { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); margin-bottom: var(--space-1); width: 100%; }
+.pm-head-row p { margin: 0; color: var(--muted); font-size: var(--font-sm); }
+.pm-head-meta { display: flex; align-items: center; gap: var(--space-3); color: var(--muted); font-size: var(--font-sm); white-space: nowrap; }
+
+.pm-patient-name { font-weight: 600; }
+.pm-patient-mrn { color: var(--muted); font-size: var(--font-xs); }
+
+/* Registration form: logical field groups inside the modal. */
+.pm-form-group { margin-top: var(--space-4); }
+.pm-form-group:first-child { margin-top: 0; }
+.pm-form-group-title { font-size: var(--font-sm); font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .03em; margin-bottom: var(--space-2); }
+.pm-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+.pm-required { color: var(--status-danger); margin-left: 2px; }
+.pm-field-error { color: var(--status-danger); font-size: var(--font-xs); margin-top: 2px; }
+
+.pm-duplicate-warning { background: color-mix(in srgb, var(--status-warning) 10%, transparent); border: 1px solid color-mix(in srgb, var(--status-warning) 35%, transparent); border-radius: var(--radius-sm); padding: var(--space-3); margin-top: var(--space-3); }
+.pm-duplicate-warning ul { margin: var(--space-2) 0 0; padding-left: 18px; }
+
+/* Mobile card list — mirrors the Worklist pattern. */
+.pm-cards { display: none; }
+.pm-card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-sm); padding: var(--space-4); margin-bottom: var(--space-3); }
+.pm-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-2); margin-bottom: var(--space-2); }
+.pm-card-row { display: flex; justify-content: space-between; gap: var(--space-2); font-size: var(--font-sm); padding: 4px 0; }
+.pm-card-row span:first-child { color: var(--muted); }
+.pm-card-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: var(--space-3); }
+
+/* Patient details page. */
+.pd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); align-items: start; }
+.pd-field { display: flex; flex-direction: column; gap: 2px; padding: var(--space-2) 0; border-bottom: 1px solid var(--border); }
+.pd-field:last-child { border-bottom: none; }
+.pd-field span { color: var(--muted); font-size: var(--font-xs); }
+
+@media (max-width: 1024px) {
+  .pm-form-grid { grid-template-columns: 1fr; }
+  .pd-grid { grid-template-columns: 1fr; }
+  .pm-table th:nth-child(4), .pm-table td:nth-child(4) { display: none; } /* Contact column tucked into the row's secondary line at tablet */
+}
+@media (max-width: 640px) {
+  .pm-table-wrap { display: none; }
+  .pm-cards { display: block; }
+  .pm-head-row { flex-direction: column; align-items: flex-start; }
+  /* Patient Details' study/order history tables: drop the least essential
+     columns so the common case fits without scrolling; full data remains one
+     swipe away since the tables still scroll within their card. */
+  .pd-studies-table th:nth-child(4), .pd-studies-table td:nth-child(4),
+  .pd-studies-table th:nth-child(6), .pd-studies-table td:nth-child(6) { display: none; }
+  .pd-orders-table th:nth-child(4), .pd-orders-table td:nth-child(4) { display: none; }
+}
+
+/* ---- Phase 6B: study details --------------------------------------------
+ * Scoped to the new StudyDetails page only. Does not touch Worklist's or
+ * PatientDetails' own layout/columns/filters. */
+.sd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); align-items: start; }
+.sd-field { display: flex; flex-direction: column; gap: 2px; padding: var(--space-2) 0; border-bottom: 1px solid var(--border); }
+.sd-field:last-child { border-bottom: none; }
+.sd-field span { color: var(--muted); font-size: var(--font-xs); }
+
+@media (max-width: 1024px) {
+  .sd-grid { grid-template-columns: 1fr; }
+}
+
+/* ---- Phase 6C: reporting worklist ----------------------------------------
+ * Scoped to the Reporting Worklist page only. Mirrors the Worklist (.wl-*)
+ * pattern from Phase 4 — does not touch Worklist/Patients/StudyDetails CSS. */
+.rw-head-row { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); margin-bottom: var(--space-1); width: 100%; }
+.rw-head-row p { margin: 0; color: var(--muted); font-size: var(--font-sm); }
+.rw-head-meta { display: flex; align-items: center; gap: var(--space-3); color: var(--muted); font-size: var(--font-sm); white-space: nowrap; }
+.rw-kpi-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: var(--space-2); margin-bottom: var(--space-3); }
+.rw-patient-name { font-weight: 600; }
+.rw-patient-id { color: var(--muted); font-size: var(--font-xs); }
+.rw-study-desc { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted); font-size: var(--font-xs); }
+.rw-cards { display: none; }
+.rw-card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-sm); padding: var(--space-4); margin-bottom: var(--space-3); }
+.rw-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-2); margin-bottom: var(--space-2); }
+.rw-card-row { display: flex; justify-content: space-between; gap: var(--space-2); font-size: var(--font-sm); padding: 4px 0; }
+.rw-card-row span:first-child { color: var(--muted); }
+.rw-card-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: var(--space-3); }
+
+@media (max-width: 1024px) {
+  .rw-kpi-row { grid-template-columns: repeat(3, 1fr); }
+  .rw-study-desc { max-width: 110px; }
+  .rw-table th:nth-child(4), .rw-table td:nth-child(4),
+  .rw-table th:nth-child(5), .rw-table td:nth-child(5) { display: none; }
+  .rw-table .row-actions { flex-direction: column; gap: 4px; align-items: stretch; }
+  .rw-table .row-actions .btn { padding: 4px 8px; font-size: var(--font-xs); }
+  .rw-table th, .rw-table td { padding: 8px; }
+  .rw-table .rw-patient-id { font-size: 10px; }
+}
+@media (max-width: 640px) {
+  .rw-kpi-row { grid-template-columns: repeat(2, 1fr); }
+  .rw-table-wrap { display: none; }
+  .rw-cards { display: block; }
+  .rw-head-row { flex-direction: column; align-items: flex-start; }
+  .rw-filter-grid { grid-template-columns: 1fr; }
+  .rw-date-range { flex-wrap: wrap; }
+  .rw-date-range input { min-width: 0; flex: 1 1 120px; }
+}
+
+/* ---- Phase 6D: radiology report editor -----------------------------------
+ * Scoped to the Report Editor page only. All state/handlers/business logic
+ * are unchanged — this only restyles existing markup. */
+.re-header-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-3); }
+.re-field { display: flex; flex-direction: column; gap: 2px; }
+.re-field span { color: var(--muted); font-size: var(--font-xs); }
+.re-create-row { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
+.re-status-bar { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); flex-wrap: wrap; margin-bottom: 14px; }
+.re-status-left { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.re-save-state { margin-left: 4px; }
+.re-status-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.re-sections { display: flex; flex-direction: column; gap: 14px; }
+.re-section-label { display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 4px; }
+.re-addendum-row { border-top: 1px solid var(--border); padding-top: 8px; margin-top: 8px; }
+.re-signature-row { font-size: 13px; padding: 6px 0; }
+
+@media (max-width: 1024px) {
+  .re-header-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) {
+  .re-header-grid { grid-template-columns: 1fr; }
+  .re-status-bar { flex-direction: column; align-items: flex-start; }
+  .re-create-row { flex-direction: column; align-items: stretch; }
+}
+
+/* ---- Phase 6E: administration modules ------------------------------------
+ * Shared, generic CRUD list/card/form scaffolding reused by the 6 bespoke
+ * admin pages below (Users, Doctors, Modalities, Departments, Report
+ * Templates, Orders). These pages do not use the shared CrudPage/DataTable
+ * component (kept untouched for the other admin pages that still depend on
+ * it) — they share only this CSS, which is purely visual. */
+.adm-head-row { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); margin-bottom: var(--space-1); width: 100%; }
+.adm-head-row p { margin: 0; color: var(--muted); font-size: var(--font-sm); }
+.adm-head-meta { display: flex; align-items: center; gap: var(--space-3); color: var(--muted); font-size: var(--font-sm); white-space: nowrap; }
+.adm-form-group { margin-top: var(--space-4); }
+.adm-form-group:first-child { margin-top: 0; }
+.adm-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+.adm-required { color: var(--status-danger); margin-left: 2px; }
+.adm-field-error { color: var(--status-danger); font-size: var(--font-xs); margin-top: 2px; }
+.adm-cards { display: none; }
+.adm-card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-sm); padding: var(--space-4); margin-bottom: var(--space-3); }
+.adm-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-2); margin-bottom: var(--space-2); }
+.adm-card-row { display: flex; justify-content: space-between; gap: var(--space-2); font-size: var(--font-sm); padding: 4px 0; }
+.adm-card-row span:first-child { color: var(--muted); }
+.adm-card-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: var(--space-3); }
+
+@media (max-width: 1024px) {
+  .adm-form-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .adm-table-wrap { display: none; }
+  .adm-cards { display: block; }
+  .adm-head-row { flex-direction: column; align-items: flex-start; }
+}
+
+/* Orders table: 7 columns is the widest in the admin set — hide the least
+ * essential at tablet so the common case fits without a horizontal nudge. */
+@media (max-width: 1024px) {
+  .ord-table th:nth-child(3), .ord-table td:nth-child(3) { display: none; } /* Modality — still visible via Edit */
+  .ord-table th, .ord-table td { padding: 8px; font-size: var(--font-sm); }
+  .ord-table .row-actions { flex-direction: column; gap: 4px; align-items: stretch; }
+  .ord-table .row-actions .btn { padding: 4px 8px; font-size: var(--font-xs); }
+}
+
+/* ---- Phase 6F: PACS operations module consistency ------------------------
+ * Shared, generic KPI-grid and responsive-table scaffolding reused by the 10
+ * operational pages (Command Centre, Exceptions, History, Reverse Push,
+ * Archive, Storage, Monitoring, Alerts, MWL Monitor, Reception Logs). These
+ * pages keep their own state/logic/API calls — this is visual only, and
+ * does not touch Dashboard/Worklist/Patients/StudyDetails/ReportEditor. */
+.ops-kpi-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: var(--space-3); margin-bottom: var(--space-4); }
+
+@media (max-width: 1024px) {
+  .ops-kpi-row { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: var(--space-2); }
+  .ops-table-wrap table { font-size: var(--font-sm); }
+  .ops-table-wrap th, .ops-table-wrap td { padding: 8px; }
+}
+@media (max-width: 640px) {
+  .ops-kpi-row { grid-template-columns: repeat(2, 1fr); }
+  .ops-table-wrap { overflow-x: auto; }
+  .ops-table-wrap table { min-width: 480px; }
+}

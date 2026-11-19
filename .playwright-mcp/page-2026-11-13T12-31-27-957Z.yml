@@ -1,0 +1,94 @@
+- generic [ref=f3e3]:
+  - complementary [ref=f3e4]:
+    - generic [ref=f3e5]:
+      - generic [ref=f3e6]: 🩻 RIS·PACS
+      - generic [ref=f3e7]: Enterprise Edition
+    - navigation [ref=f3e8]:
+      - generic [ref=f3e9]:
+        - generic [ref=f3e10]: Overview
+        - link "Dashboard" [ref=f3e11] [cursor=pointer]:
+          - /url: /
+      - generic [ref=f3e12]:
+        - generic [ref=f3e13]: Administration
+        - link "Organizations" [ref=f3e14] [cursor=pointer]:
+          - /url: /admin/organizations
+        - link "Departments" [ref=f3e15] [cursor=pointer]:
+          - /url: /admin/departments
+        - link "Doctors" [ref=f3e16] [cursor=pointer]:
+          - /url: /admin/doctors
+        - link "Users" [ref=f3e17] [cursor=pointer]:
+          - /url: /admin/users
+        - link "Modalities" [ref=f3e18] [cursor=pointer]:
+          - /url: /admin/modalities
+  - banner [ref=f3e19]:
+    - strong [ref=f3e20]: Administration
+    - generic [ref=f3e21]:
+      - button "🌙" [ref=f3e22] [cursor=pointer]
+      - generic [ref=f3e23]: admin (super admin)
+      - button "Logout" [ref=f3e24] [cursor=pointer]
+  - main [ref=f3e25]:
+    - generic [ref=f3e26]:
+      - generic [ref=f3e27]:
+        - generic [ref=f3e28]:
+          - heading "Modality" [level=1] [ref=f3e29]
+          - generic [ref=f3e30]: Field set is standard DICOM and flexible — pending the New Modality screenshot. Test Connection is a TCP probe; DICOM C-ECHO arrives in Phase 4.
+        - button "+ New" [active] [ref=f3e31] [cursor=pointer]
+      - generic [ref=f3e32]:
+        - textbox "Search…" [ref=f3e34]
+        - generic [ref=f3e35]:
+          - table [ref=f3e36]:
+            - rowgroup [ref=f3e37]:
+              - row [ref=f3e38]:
+                - columnheader "Name" [ref=f3e39] [cursor=pointer]
+                - columnheader "AE Title" [ref=f3e40] [cursor=pointer]
+                - columnheader "Host" [ref=f3e41] [cursor=pointer]
+                - columnheader "Port" [ref=f3e42] [cursor=pointer]
+                - columnheader "Type" [ref=f3e43] [cursor=pointer]
+                - columnheader "Status" [ref=f3e44] [cursor=pointer]
+                - columnheader "Actions" [ref=f3e45] [cursor=pointer]
+            - rowgroup [ref=f3e46]:
+              - row [ref=f3e53]:
+                - cell "No records found." [ref=f3e54]
+          - generic [ref=f3e49]:
+            - generic [ref=f3e50]: 0 total · page 1/1
+            - button "Prev" [disabled] [ref=f3e51] [cursor=pointer]
+            - button "Next" [disabled] [ref=f3e52] [cursor=pointer]
+      - generic [ref=f3e56]:
+        - generic [ref=f3e57]:
+          - heading "New Modality" [level=1] [ref=f3e58]
+          - button "✕" [ref=f3e59] [cursor=pointer]
+        - generic [ref=f3e60]:
+          - generic [ref=f3e61]: Device Name *
+          - textbox [ref=f3e62]
+        - generic [ref=f3e63]:
+          - generic [ref=f3e64]: AE Title *
+          - textbox [ref=f3e65]
+          - generic [ref=f3e66]: DICOM Application Entity title (≤16 chars)
+        - generic [ref=f3e67]:
+          - generic [ref=f3e68]: Host / IP *
+          - textbox [ref=f3e69]
+        - generic [ref=f3e70]:
+          - generic [ref=f3e71]: Port *
+          - spinbutton [ref=f3e72]
+        - generic [ref=f3e73]:
+          - generic [ref=f3e74]: Modality Type *
+          - combobox [ref=f3e75]:
+            - option "— select —" [selected]
+            - option "CT"
+            - option "MR"
+            - option "CR"
+            - option "DX"
+            - option "US"
+            - option "MG"
+            - option "NM"
+            - option "PT"
+            - option "XA"
+            - option "OT"
+        - generic [ref=f3e76]:
+          - generic [ref=f3e77]: Organization
+          - combobox [ref=f3e78]:
+            - option "— select —" [selected]
+            - option "GGH — GG Hospital"
+        - generic [ref=f3e79]:
+          - button "Save" [ref=f3e80] [cursor=pointer]
+          - button "Cancel" [ref=f3e81] [cursor=pointer]

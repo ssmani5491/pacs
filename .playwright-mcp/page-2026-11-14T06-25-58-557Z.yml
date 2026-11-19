@@ -1,0 +1,82 @@
+- generic [ref=f5e3]:
+  - complementary [ref=f5e4]:
+    - generic [ref=f5e5]:
+      - generic [ref=f5e6]: 🩻 RIS·PACS
+      - generic [ref=f5e7]: Enterprise Edition
+    - navigation [ref=f5e8]:
+      - generic [ref=f5e9]:
+        - generic [ref=f5e10]: Overview
+        - link "Dashboard" [ref=f5e11] [cursor=pointer]:
+          - /url: /
+      - generic [ref=f5e12]:
+        - generic [ref=f5e13]: Radiology
+        - link "Worklist" [ref=f5e14] [cursor=pointer]:
+          - /url: /worklist
+        - link "Patients" [ref=f5e15] [cursor=pointer]:
+          - /url: /patients
+        - link "Examination Orders" [ref=f5e16] [cursor=pointer]:
+          - /url: /orders
+      - generic [ref=f5e17]:
+        - generic [ref=f5e18]: PACS
+        - link "PACS Monitoring" [ref=f5e19] [cursor=pointer]:
+          - /url: /pacs/monitor
+        - link "Reception Logs" [ref=f5e20] [cursor=pointer]:
+          - /url: /pacs/reception-logs
+        - link "Reconciliation" [ref=f5e21] [cursor=pointer]:
+          - /url: /pacs/reconciliation
+        - link "Modality Worklist" [ref=f5e22] [cursor=pointer]:
+          - /url: /pacs/mwl
+      - generic [ref=f5e23]:
+        - generic [ref=f5e24]: Reporting
+        - link "Reporting Worklist" [ref=f5e25] [cursor=pointer]:
+          - /url: /reporting
+      - generic [ref=f5e26]:
+        - generic [ref=f5e27]: Operations
+        - link "Notifications" [ref=f5e28] [cursor=pointer]:
+          - /url: /notifications
+        - link "System Monitoring" [ref=f5e29] [cursor=pointer]:
+          - /url: /ops/monitoring
+        - link "Alert Management" [ref=f5e30] [cursor=pointer]:
+          - /url: /ops/alerts
+        - link "Audit Logs" [ref=f5e31] [cursor=pointer]:
+          - /url: /ops/audit
+      - generic [ref=f5e32]:
+        - generic [ref=f5e33]: Administration
+        - link "Organizations" [ref=f5e34] [cursor=pointer]:
+          - /url: /admin/organizations
+        - link "Departments" [ref=f5e35] [cursor=pointer]:
+          - /url: /admin/departments
+        - link "Doctors" [ref=f5e36] [cursor=pointer]:
+          - /url: /admin/doctors
+        - link "Users" [ref=f5e37] [cursor=pointer]:
+          - /url: /admin/users
+        - link "Modalities" [ref=f5e38] [cursor=pointer]:
+          - /url: /admin/modalities
+        - link "Report Templates" [ref=f5e39] [cursor=pointer]:
+          - /url: /admin/report-templates
+  - banner [ref=f5e40]:
+    - strong [ref=f5e41]: Administration
+    - generic [ref=f5e42]:
+      - button "Notifications" [ref=f5e44] [cursor=pointer]: 🔔
+      - button "🌙" [ref=f5e45] [cursor=pointer]
+      - generic [ref=f5e46]: admin (super admin)
+      - button "Logout" [ref=f5e47] [cursor=pointer]
+  - main [ref=f5e48]:
+    - generic [ref=f5e49]:
+      - generic [ref=f5e50]:
+        - heading "System Monitoring" [level=1] [ref=f5e51]
+        - button "Checking…" [disabled] [ref=f5e52] [cursor=pointer]
+      - heading "Service Health" [level=3] [ref=f5e53]
+      - table [ref=f5e55]:
+        - rowgroup [ref=f5e56]:
+          - row [ref=f5e57]:
+            - columnheader "Service" [ref=f5e58] [cursor=pointer]
+            - columnheader "Status" [ref=f5e59] [cursor=pointer]
+            - columnheader "Response" [ref=f5e60] [cursor=pointer]
+            - columnheader "Last Success" [ref=f5e61] [cursor=pointer]
+            - columnheader "Last Failure" [ref=f5e62] [cursor=pointer]
+            - columnheader "Detail" [ref=f5e63] [cursor=pointer]
+        - rowgroup [ref=f5e64]:
+          - row [ref=f5e65]:
+            - cell "No health data yet." [ref=f5e66]
+      - heading "Operational Metrics" [level=3] [ref=f5e67]

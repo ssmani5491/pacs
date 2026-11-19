@@ -1,0 +1,167 @@
+- generic [ref=f4e14]:
+  - complementary [ref=f4e15]:
+    - generic [ref=f4e16]:
+      - generic [ref=f4e17]: 🩻 RIS·PACS
+      - generic [ref=f4e18]: Enterprise Edition
+    - navigation [ref=f4e19]:
+      - generic [ref=f4e20]:
+        - generic [ref=f4e21]: Overview
+        - link "Dashboard" [ref=f4e22] [cursor=pointer]:
+          - /url: /
+      - generic [ref=f4e23]:
+        - generic [ref=f4e24]: Radiology
+        - link "Worklist" [ref=f4e25] [cursor=pointer]:
+          - /url: /worklist
+        - link "Patients" [ref=f4e26] [cursor=pointer]:
+          - /url: /patients
+        - link "Examination Orders" [ref=f4e27] [cursor=pointer]:
+          - /url: /orders
+      - generic [ref=f4e28]:
+        - generic [ref=f4e29]: PACS
+        - link "PACS Monitoring" [ref=f4e30] [cursor=pointer]:
+          - /url: /pacs/monitor
+        - link "Reception Logs" [ref=f4e31] [cursor=pointer]:
+          - /url: /pacs/reception-logs
+        - link "Reconciliation" [ref=f4e32] [cursor=pointer]:
+          - /url: /pacs/reconciliation
+        - link "Modality Worklist" [ref=f4e33] [cursor=pointer]:
+          - /url: /pacs/mwl
+      - generic [ref=f4e34]:
+        - generic [ref=f4e35]: PACS Operations
+        - link "Command Centre" [ref=f4e36] [cursor=pointer]:
+          - /url: /pacs/operations/command-centre
+        - link "Exceptions Console" [ref=f4e37] [cursor=pointer]:
+          - /url: /pacs/operations/exceptions
+        - link "Reverse Push Monitor" [ref=f4e38] [cursor=pointer]:
+          - /url: /pacs/reverse-push
+        - link "Archive Compression" [ref=f4e39] [cursor=pointer]:
+          - /url: /pacs/archive
+        - link "Storage Management" [ref=f4e40] [cursor=pointer]:
+          - /url: /pacs/storage
+        - link "Transfer & Archive History" [ref=f4e41] [cursor=pointer]:
+          - /url: /pacs/operations/history
+      - generic [ref=f4e42]:
+        - generic [ref=f4e43]: Reporting
+        - link "Reporting Worklist" [ref=f4e44] [cursor=pointer]:
+          - /url: /reporting
+      - generic [ref=f4e45]:
+        - generic [ref=f4e46]: Operations
+        - link "Notifications" [ref=f4e47] [cursor=pointer]:
+          - /url: /notifications
+        - link "System Monitoring" [ref=f4e48] [cursor=pointer]:
+          - /url: /ops/monitoring
+        - link "Alert Management" [ref=f4e49] [cursor=pointer]:
+          - /url: /ops/alerts
+        - link "Audit Logs" [ref=f4e50] [cursor=pointer]:
+          - /url: /ops/audit
+      - generic [ref=f4e51]:
+        - generic [ref=f4e52]: Administration
+        - link "Organizations" [ref=f4e53] [cursor=pointer]:
+          - /url: /admin/organizations
+        - link "Departments" [ref=f4e54] [cursor=pointer]:
+          - /url: /admin/departments
+        - link "Doctors" [ref=f4e55] [cursor=pointer]:
+          - /url: /admin/doctors
+        - link "Users" [ref=f4e56] [cursor=pointer]:
+          - /url: /admin/users
+        - link "Modalities" [ref=f4e57] [cursor=pointer]:
+          - /url: /admin/modalities
+        - link "Report Templates" [ref=f4e58] [cursor=pointer]:
+          - /url: /admin/report-templates
+  - banner [ref=f4e59]:
+    - strong [ref=f4e60]: Administration
+    - generic [ref=f4e61]:
+      - button "Notifications" [ref=f4e63] [cursor=pointer]: 🔔
+      - button "🌙" [ref=f4e64] [cursor=pointer]
+      - generic [ref=f4e65]: ophist_rp
+      - button "Logout" [ref=f4e66] [cursor=pointer]
+  - main [ref=f4e67]:
+    - generic [ref=f4e68]:
+      - heading "Dashboard" [level=1] [ref=f4e70]
+      - heading "Clinical" [level=3] [ref=f4e71]
+      - generic [ref=f4e72]:
+        - generic [ref=f4e73]:
+          - generic [ref=f4e74]: "1002"
+          - generic [ref=f4e75]: Total Patients
+        - generic [ref=f4e76]:
+          - generic [ref=f4e77]: "0"
+          - generic [ref=f4e78]: Today's Registrations
+        - generic [ref=f4e79]:
+          - generic [ref=f4e80]: "5003"
+          - generic [ref=f4e81]: Examination Orders
+        - generic [ref=f4e82]:
+          - generic [ref=f4e83]: "0"
+          - generic [ref=f4e84]: Today's Examinations
+        - generic [ref=f4e85]:
+          - generic [ref=f4e86]: "5003"
+          - generic [ref=f4e87]: Total Studies
+        - generic [ref=f4e88]:
+          - generic [ref=f4e89]: "1983"
+          - generic [ref=f4e90]: Pending Studies
+      - heading "Reporting" [level=3] [ref=f4e91]
+      - generic [ref=f4e92]:
+        - generic [ref=f4e93]:
+          - generic [ref=f4e94]: "1018"
+          - generic [ref=f4e95]: Ready for Reporting
+        - generic [ref=f4e96]:
+          - generic [ref=f4e97]: "965"
+          - generic [ref=f4e98]: Draft
+        - generic [ref=f4e99]:
+          - generic [ref=f4e100]: "1046"
+          - generic [ref=f4e101]: Preliminary
+        - generic [ref=f4e102]:
+          - generic [ref=f4e103]: "1000"
+          - generic [ref=f4e104]: Final
+        - generic [ref=f4e105]:
+          - generic [ref=f4e106]: "974"
+          - generic [ref=f4e107]: Cancelled
+      - heading "Modality-wise Studies" [level=3] [ref=f4e108]
+      - generic [ref=f4e109]:
+        - generic [ref=f4e110]:
+          - generic [ref=f4e111]: "584"
+          - generic [ref=f4e112]: NM
+        - generic [ref=f4e113]:
+          - generic [ref=f4e114]: "586"
+          - generic [ref=f4e115]: DX
+        - generic [ref=f4e116]:
+          - generic [ref=f4e117]: "528"
+          - generic [ref=f4e118]: XA
+        - generic [ref=f4e119]:
+          - generic [ref=f4e120]: "535"
+          - generic [ref=f4e121]: PT
+        - generic [ref=f4e122]:
+          - generic [ref=f4e123]: "548"
+          - generic [ref=f4e124]: US
+        - generic [ref=f4e125]:
+          - generic [ref=f4e126]: "605"
+          - generic [ref=f4e127]: CT
+        - generic [ref=f4e128]:
+          - generic [ref=f4e129]: "547"
+          - generic [ref=f4e130]: MG
+        - generic [ref=f4e131]:
+          - generic [ref=f4e132]: "521"
+          - generic [ref=f4e133]: MR
+        - generic [ref=f4e134]:
+          - generic [ref=f4e135]: "549"
+          - generic [ref=f4e136]: CR
+      - heading "Administration" [level=3] [ref=f4e137]
+      - generic [ref=f4e138]:
+        - generic [ref=f4e139]:
+          - generic [ref=f4e140]: "1"
+          - generic [ref=f4e141]: Organizations
+        - generic [ref=f4e142]:
+          - generic [ref=f4e143]: "0"
+          - generic [ref=f4e144]: Departments
+        - generic [ref=f4e145]:
+          - generic [ref=f4e146]: "0"
+          - generic [ref=f4e147]: Doctors
+        - generic [ref=f4e148]:
+          - generic [ref=f4e149]: "6"
+          - generic [ref=f4e150]: Users
+        - generic [ref=f4e151]:
+          - generic [ref=f4e152]: "0"
+          - generic [ref=f4e153]: Modalities
+        - generic [ref=f4e154]:
+          - generic [ref=f4e155]: "0"
+          - generic [ref=f4e156]: Active Modalities
+      - paragraph [ref=f4e157]: All counts are live from the database.
