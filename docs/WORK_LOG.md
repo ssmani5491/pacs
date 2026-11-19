@@ -568,3 +568,145 @@ permission, or I can retry once more per the classifier's own note that it
 will see `git status` on the next few requests); (2) approval of the
 `qa_tester` role/user proposal from the previous entry, before any further
 automated testing uses the `admin` account again.
+
+## 2026-11-19 13:10 IST — qa_tester created, Pivotal C-ECHO confirmed, full regression green, v1.0.1 tagged
+
+### 1. What I did
+
+**Item 1 — qa_tester.** Added the `qa_tester` role to `backend/src/rbac/
+permissions.ts` (4 permissions only: `modality.manage`,
+`pacs.reverse-push.view`, `pacs.reverse-push.manage`,
+`pacs.destination.manage` — never `super_admin`). Rebuilt the backend so the
+role existed in the database (the automatic seed is idempotent and never
+touches `admin`). Created the `qa_tester` user with a freshly-generated
+random password, hashed with real `argon2id` + the actual `PASSWORD_PEPPER`
+— entirely inside the backend container, the plaintext password never
+appeared in any tool output I can see. Moved the password directly from a
+container-internal scratch file into
+`C:\Users\user\pacs_test_credentials.local` (merged into the existing JSON,
+all 4 prior keys — `recept1`, `rad_ggh`, `rad_tcl`, `admin` — preserved
+unchanged) via a Node script that never printed either file's contents, then
+deleted every scratch copy. Verified with one login: succeeded, holds
+exactly the intended 4 permissions, can reach Modalities (200), correctly
+blocked from user management (403).
+
+**Item 2 — Pivotal C-ECHO via reverse-push.** Using `qa_tester` (not
+`admin`), created a clearly-named temporary destination
+(`_TEMP_TEST_pivotal_cecho_only`, AE `PIVOTAL_LISTENER`,
+`172.16.7.82:11112`), ran the reverse-push "test destination" endpoint
+against it, confirmed a real success (`{"ok":true,"detail":"C-ECHO
+acknowledged"}`, persisted as `lastTestStatus: SUCCESS` /
+`lastTestDetail: C-ECHO OK`), then deactivated it (`active: false`) — all
+confirmed by direct, read-only follow-up queries. Re-confirmed before
+running that `testDestination()`'s code path can only ever call C-ECHO
+(`putModality` + `echoModality`), never `storeToModality` (C-STORE) — that
+method is only reachable from the separate, job-based `executeJob()`, which
+this test never calls. Also traced and reported the stale `orthanc-dest`
+fixture's origin (see §2 below) — read-only, nothing about it was changed.
+
+**Item 3 — full regression.** Ran the complete Playwright suite and the
+full backend unit test suite. Found 3 failures on the first Playwright run,
+all in `operational-integration.spec.ts`'s "exceptions" tests — diagnosed
+as pre-existing, unrelated test-fixture staleness (see §4), not a
+regression from any fix in this series. Fixed the fixture data and
+confirmed all 3 pass once fresh, then re-ran the complete suite clean.
+
+**Item 4 — tag.** Committed the `qa_tester` role addition, then created and
+pushed the `v1.0.1` tag.
+
+### 2. The stale `orthanc-dest` fixture — what it is, where it comes from
+
+`orthanc-dest` was a **throwaway, second Orthanc instance** stood up
+*outside* `docker-compose.yml`, directly on the `pacs` Docker network,
+specifically to serve as a receiving/destination PACS for the PACS
+Operations Module 1 (reverse-push / DICOM transfer) acceptance testing —
+documented explicitly in `docs/REVERSE_PUSH_TEST_RESULTS.md`
+(dated 2026-11-14): *"A throwaway second Orthanc (`orthanc-dest`, AE
+DESTPACS, port 4242) on the pacs network served as the destination PACS and
+was removed after testing (never added to docker-compose)."* The container
+itself was removed after that testing session, but the hostname lives on as
+a stale value in two places that were never cleaned up: the `Test Dest
+Orthanc` row already present in `pacs_destinations` (created during that
+same test run), and a hard-coded value in `tests/reverse-push.spec.ts:25`.
+Neither was changed in this entry, per the instruction to report, not fix,
+this one.
+
+### 3. Files changed
+
+- `backend/src/rbac/permissions.ts` — added the `qa_tester` role (committed,
+  `8605710`).
+- `C:\Users\user\pacs_test_credentials.local` (outside the repo, never
+  committed) — gained one new `qa_tester` key; all prior keys unchanged.
+- No application source files were changed by items 2 or 3 — those were
+  pure verification/regression work. The `qa_tester` **user** itself
+  (as opposed to the role) was created directly in the database via a
+  one-off script, not committed to the repo (consistent with how `admin`
+  itself is created by `seed.ts` at runtime, not hard-coded in source).
+
+### 4. Important / risky changes
+
+- **Database change (test data only)**: deleted 3 stale seeded rows in
+  `dicom_transfer_jobs` (fixed IDs `e5000000-...-f01/f02/f03`) that had been
+  silently mutated away from their intended `PARTIALLY_COMPLETED`/`RUNNING`
+  states by this project's own, pre-existing `recoverStuckJobs()` scheduler
+  over the days since they were originally seeded (2026-11-15/18) — then
+  re-ran `tools/testdata/seed_ops_exceptions_testjobs.sql` (the same script
+  that originally created them, documented as idempotent/additive-only) to
+  restore the intended fixture state. This is exactly the kind of test-data
+  reset the script's own header describes it for; nothing outside those 3
+  rows (and the fixtures the same script re-creates) was touched.
+- **Database change (test data only)**: created and later deactivated one
+  temporary `PacsDestination` row (`_TEMP_TEST_pivotal_cecho_only`) for
+  item 2. Still present but `active: false`, per the brief's own "deactivate
+  afterwards" instruction (not deleted — this resource type has no delete
+  endpoint at all, confirmed in an earlier entry).
+- No production/clinical data was touched by anything in this entry.
+
+### 5. Problems found → cause → fix
+
+| # | Problem | Cause | Fix |
+|---|---|---|---|
+| 1 | `qa_tester` role creation script failed on first attempt: `ROLE_MISSING` | The running `backend` container's compiled code predated the `permissions.ts` edit (I'd edited the source but not yet rebuilt) | Rebuilt `backend`; the automatic `prisma migrate deploy` + idempotent seed on boot created the role (confirmed via a direct `SELECT`) without touching the existing `admin` row |
+| 2 | My first live-test script asserted `res.status()` toBe `200` for the Pivotal reverse-push test, but got `201` | My own incorrect assumption — this NestJS route legitimately returns `201` for a successful `POST`; the actual result (`{"ok":true,"detail":"C-ECHO acknowledged"}`) was a full real success the whole time | Confirmed by reading the real response body and the persisted `lastTestStatus`/`lastTestDetail` directly — not a bug in the application or the DICOM fixes, purely my test assertion being wrong |
+| 3 | 3 Playwright tests in `operational-integration.spec.ts`'s "exceptions" suite failed on first full-suite run | Pre-existing test fixture rows (seeded 2026-11-15/18, fixed UUIDs) had been legitimately mutated by this project's own `recoverStuckJobs()` scheduler over the days this dev stack has been continuously running — a test-environment staleness issue unrelated to any fix in this series, confirmed by checking `dicom_transfer_jobs` directly (0 rows in `PARTIALLY_COMPLETED`/`RUNNING` state) and tracing the scheduler that reconciled them | Deleted the 3 stale fixture rows and re-ran the project's own documented, idempotent seed script (`seed_ops_exceptions_testjobs.sql`) to restore fresh fixture data; all 3 tests then passed, and the full suite went green |
+
+### 6. Commands run + pass/fail
+
+| Command | Purpose | Result |
+|---|---|---|
+| Node script inside `backend` container: generate password, argon2id+pepper hash, create user+role via Prisma | Create `qa_tester` | ✅ `USER_CREATED`, `ROLE_ASSIGNED` (no password printed) |
+| `docker compose cp` + Node merge script | Move password into the protected credentials file only | ✅ confirmed: all 5 keys present (`recept1,rad_ggh,rad_tcl,admin,qa_tester`) |
+| Playwright: `qa_tester` login + permission check | Verify item 1 | ✅ login 200, exactly 4 permissions, modalities 200, users 403 |
+| Playwright: create temp destination → test (C-ECHO) → deactivate | **Item 2**: Pivotal C-ECHO via reverse-push | ✅ `{"ok":true,"detail":"C-ECHO acknowledged"}`; DB confirms `active:false`, `lastTestStatus:SUCCESS` |
+| Read-only: `GET /modalities?expand` on Orthanc, before/after | Confirm no leftover Orthanc registration from the Pivotal test | ✅ `{}` both times |
+| `npx playwright test` (full suite, 1st run) | **Item 3** | ❌ 3 failed / 67 passed — diagnosed as pre-existing fixture staleness (§5#3), unrelated to this fix series |
+| `node node_modules/jest/bin/jest.js` (full backend suite) | **Item 3** | ✅ 48/48 passing, 11/11 suites |
+| Fixture reset (delete 3 stale rows + re-run the documented seed script) | Fix the root cause of the 3 failures | ✅ |
+| `npx playwright test operational-integration.spec.ts --grep "exceptions:"` | Confirm the fix | ✅ 8/8 |
+| `npx playwright test` (full suite, final run) | **Item 3**, final | ✅ **70/70 passing** |
+| `git commit` (qa_tester role) | **Item 4** | ✅ `8605710` |
+| `git tag v1.0.1` + push | **Item 4** | ✅ (see below) |
+
+**Final totals: Playwright 70/70, backend unit tests 48/48 (11/11 suites).
+Zero failures remaining.**
+
+### 7. Not done yet / open questions
+
+- The `qa_tester` **user itself** (as opposed to the role) exists only in
+  the running database and the protected credentials file — it is not
+  represented anywhere in the committed source, by design (same as `admin`).
+  If this dev environment's database is ever reset from scratch, re-running
+  the same creation approach (or formalizing it as a proper `tools/testdata/`
+  script, following this project's own convention) would be needed again.
+- `tests/reverse-push.spec.ts:25`'s hard-coded `orthanc-dest` hostname and
+  the `Test Dest Orthanc` destination row both still reference a container
+  that no longer exists — reported per instruction, not changed. Worth a
+  future cleanup pass if that test suite is ever revisited, but out of
+  scope for this task.
+
+### 8. Next step / waiting for approval
+
+All four approved items are complete: `qa_tester` created and verified;
+Pivotal C-ECHO success confirmed via reverse-push and the temp destination
+deactivated; full regression suite green (70/70 + 48/48); `v1.0.1` tagged
+and pushed. Nothing further pending from this task.
