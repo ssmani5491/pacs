@@ -1,5 +1,52 @@
 # RIS + PACS All-in-One — Release Notes
 
+## Version 1.0.1
+
+### DICOM connectivity fixes (Modality Devices "Test Connection" + reverse-push)
+
+Follows directly from the investigation in
+`docs/DICOM_CONNECTIVITY_ROOT_CAUSE_ANALYSIS.md`. All five fixes recommended in
+that report's §8, applied:
+
+1. **Modality Devices "Test Connection" now performs a real DICOM C-ECHO.**
+   Previously a TCP-only stub (its own code comment admitted the real DICOM
+   check was never implemented) paired with a frontend that read response
+   field names the backend never returned — the UI always showed the literal
+   word "unreachable" no matter what actually happened. It now does a TCP
+   reachability check, then a genuine Orthanc-native C-ECHO, and reports one
+   of six specific, real outcomes (success with response time; TCP
+   unreachable; TCP timeout; association rejected with Orthanc's own reason;
+   echo timeout; other echo error).
+2. **`OrthancService.putModality()` now sends `LocalAet`.** Previously every
+   modality registered through either the Modality Devices test or the
+   reverse-push (PACS Destinations) feature silently used Orthanc's
+   server-wide default Calling AE — a destination's configured `callingAet`
+   was stored and shown in the UI but never actually sent to Orthanc. Fixed
+   for both features.
+3. **Orthanc REST error responses are no longer discarded.** The shared
+   Orthanc request helper now reads and logs the full response body on any
+   failed call (never logging credentials), so a real DICOM-level rejection
+   reason is visible in logs and surfaced to the UI instead of only an HTTP
+   status code.
+4. **Temporary test modality registrations always clean up.** The
+   reverse-push destination test previously only deregistered its temporary
+   Orthanc modality entry on the success path — a `try`/`finally` now
+   guarantees cleanup even when the test itself fails, so a failed test can
+   no longer leave a stray entry in Orthanc's `/modalities`.
+5. One further item from the investigation (the health monitor's periodic
+   raw-TCP probe to Orthanc's DICOM port, which produces harmless but
+   recurring "blank Calling AE" log noise) was deliberately **not** changed —
+   out of scope for this fix series and carries more risk than benefit to
+   touch alongside these changes; see the Work Log for the full reasoning.
+
+**Testing**: added unit coverage for the new `testConnection` outcome
+contract (6 new tests); full backend suite 48/48 passing across all 11
+suites; `tsc --noEmit` clean.
+
+**Safety**: per the fix brief, testing against the real Pivotal PACS used
+C-ECHO only — no C-STORE/C-MOVE was ever sent, and no study was transferred.
+No database schema change was required.
+
 ## Version 1.0.0 (first release)
 
 ### What's included
