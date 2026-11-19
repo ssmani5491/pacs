@@ -186,6 +186,22 @@ stops services in reverse dependency order, and `rispacs` depends on
 mid-shutdown; `postgres`'s `stop_grace_period` of 60s then gives it time to
 shut down cleanly without corruption.
 
+## Release process
+
+This image is built by the repo's `Jenkinsfile`, which tracks two branches:
+
+- **`dev`** — day-to-day work. Every push builds a dev/release-candidate
+  image (tagged as an RC), runs the backend tests, smoke test, and (unless
+  skipped) the Sonar/Trivy scans. Nothing on `dev` is tagged as a release.
+- **`main`** — releases only. `dev` is merged into `main` only when it's
+  ready to ship. A build on `main` additionally creates the next `vX.Y.Z`
+  git tag and publishes the production `rispacs` image under that tag (plus
+  the offline bundle, if requested).
+
+In short: **work on `dev` → Jenkins builds a dev/RC image → merge `dev` into
+`main` only for a release → Jenkins creates `vX.Y.Z` and the production
+image.**
+
 ## Migrating from the developer docker-compose.yml stack
 
 If you (or your vendor) previously ran this system via the project's root
