@@ -112,3 +112,128 @@ modality registration created for the approved live test
 `GET /modalities?expand` was used both before and after to confirm Orthanc's state
 is byte-for-byte identical to its pre-investigation baseline. All 8 dev-stack
 containers' uptimes were unchanged throughout, confirming none were restarted.
+
+## 2026-11-19 10:50 IST — Implement §8 fixes (DICOM connectivity)
+
+### 1. What I did
+
+Also initialized this project as a git repository (it had none before), made
+an initial commit of the existing codebase, and pushed it to
+`github.com/ssmani5491/pacs` — explicitly confirmed with the user first.
+Implemented all four source-code fixes from
+`docs/DICOM_CONNECTIVITY_ROOT_CAUSE_ANALYSIS.md` §8, each as its own commit:
+(1) real two-step Modality Devices "Test Connection" (TCP + Orthanc C-ECHO)
+with correct, specific frontend result display; (2) `LocalAet` now sent to
+Orthanc from the destination's configured `callingAet`, for both the
+Modality Devices and reverse-push features; (3) Orthanc's HTTP error
+response body is now captured and logged instead of discarded; (4) the
+reverse-push destination test now always deregisters its temporary Orthanc
+modality entry via `try`/`finally`, even on failure. Fixed a pre-existing
+unit test that would have broken from the new required constructor
+parameter, and added 4 new tests covering the real `testConnection`
+behavior. Ran the full backend unit suite and a TypeScript compile check —
+both clean. Updated `RELEASE_NOTES.md` to document all of this as version
+1.0.1.
+
+**Docker Desktop was not running for a significant part of this session**
+(the daemon connection failed partway through, and remained down through
+the end of this work session despite checking repeatedly) — this blocked
+the live UI/API tests (a)-(e) from the brief and the all-in-one image
+rebuild portion of test (f). Everything achievable without a running
+container (source changes, 5 commits, unit tests, `tsc --noEmit`) is done
+and verified; the Docker-dependent tests are listed as BLOCKED below, not
+fabricated.
+
+### 2. Files changed
+
+- `.gitignore` — added `deploy/allinone/db_password.txt`,
+  `deploy/allinone/rispacs.ini`, `deploy/allinone/data/`,
+  `deploy/allinone/test-data/`, `dist/`.
+- `backend/src/orthanc/orthanc.service.ts` — `req()` now captures/logs the
+  error response body; `putModality()` accepts an optional `localAet`
+  parameter and sends `LocalAet`; `echoModality()` reports elapsed time and
+  a classified failure reason.
+- `backend/src/modalities/modalities.service.ts` — `testConnection()`
+  rewritten: real TCP + Orthanc C-ECHO two-step test, `try`/`finally`
+  cleanup, six specific outcome values (new exported
+  `ModalityTestResult` interface).
+- `backend/src/modalities/modalities.service.spec.ts` — fixed the broken
+  2-argument constructor call; added 4 new tests for `testConnection`.
+- `backend/src/pacs/reverse-push.service.ts` — both `putModality()` call
+  sites now pass `callingAet`/`dest.callingAet`; `testDestination()`'s
+  Orthanc calls wrapped in `try`/`finally` for guaranteed cleanup.
+- `frontend/src/pages/admin/Modalities.tsx` — `testConnection()` reads the
+  backend's actual response shape and displays the real outcome via a new
+  `describeTestResult()` helper; removed the outdated "TCP probe; C-ECHO
+  arrives in Phase 4" help text.
+- `deploy/allinone/RELEASE_NOTES.md` — added version 1.0.1 section.
+
+### 3. Important / risky changes
+
+None of the four fixes change a database schema, delete/rename an existing
+API field relied on elsewhere (checked: nothing else referenced the old
+`{ reachable, detail }` / `{ ok, message }` shapes), or touch anything
+outside the Modality/PACS-destination test paths. The `OrthancService`
+method signature changes (`putModality`, `echoModality`) are additive
+(new optional trailing parameters / richer return objects) — every existing
+caller still compiles and behaves the same when the new parameter is
+omitted.
+
+### 4. Problems found → cause → fix
+
+| # | Problem | Cause | Fix |
+|---|---|---|---|
+| 1 | The existing `modalities.service.spec.ts` would have broken | It constructed `ModalitiesService` with only 2 arguments; the fix added a required 3rd (`OrthancService`) | Updated the test file's constructor call and added an `OrthancService` mock |
+| 2 | My first version of a new TCP-failure test asserted the wrong outcome | `192.0.2.1` (TEST-NET-1) silently drops packets rather than actively refusing the connection on this network, so the probe reaches its own timeout (`TCP_TIMEOUT`) rather than an immediate `TCP_UNREACHABLE` — my test's expectation was wrong, not the code | Changed the assertion to accept either specific TCP-failure outcome, since the real thing under test (never calling Orthanc, never showing the old hard-coded string) holds either way |
+| 3 | `tsc --noEmit` initially showed 8 errors, all `Property 'backupRun' does not exist on type 'PrismaService'` | Pre-existing, unrelated to this fix series: the host's local `node_modules/@prisma/client` was generated before the `BackupRun` model (added in an earlier, unrelated phase) and was simply stale — confirmed the model exists in `schema.prisma` | Ran `prisma generate` locally (schema-read-only, no database touched) to refresh the host's generated client; `tsc --noEmit` is now fully clean |
+| 4 | `npm test`/`npm run test` failed with `'jest' is not recognized`, in both Git Bash and PowerShell | A PATH-resolution quirk between the global `npm`/`node` install and this project's local `node_modules/.bin` on this host — unrelated to the code changes | Invoked `node node_modules/jest/bin/jest.js` directly, bypassing the broken `npm`-script PATH resolution |
+
+### 5. Commands run + pass/fail
+
+| Command | Purpose | Result |
+|---|---|---|
+| `git init` / `git add -A` / `git commit` (initial) | Create the repo's first commit (explicitly approved by the user) | ✅ `9de97c9` |
+| `git remote add origin ...` / `git push -u origin main` | Push to GitHub (explicitly approved by the user) | ✅ pushed |
+| 5 × `git commit` (one per fix + the test fix) | Separate commit per fix, as requested | ✅ `62ccf5b`, `2f5dd1b`, `b0ee893`, `8293252`, `580145f` |
+| `git push origin main` (×2, after the fix commits and after the release-notes commit) | Push all work | ✅ both succeeded |
+| `node node_modules/jest/bin/jest.js modalities.service.spec.ts` | Unit tests for the changed file | ✅ 6/6 passing (after fixing my own flaky assertion) |
+| `node node_modules/jest/bin/jest.js` (full suite) | Full backend regression | ✅ 48/48 passing, 11/11 suites |
+| `node node_modules/prisma/build/index.js generate` | Refresh stale local Prisma client (schema-read-only) | ✅ succeeded |
+| `node node_modules/typescript/bin/tsc --noEmit` | Type-check the backend | ✅ clean, 0 errors |
+| ESLint check | brief asked for "lint" | **N/A** — no `.eslintrc`/`eslint.config.*` exists in this project; `tsc --noEmit` is the closest equivalent static check available, and it's clean |
+| `docker ps` (checked repeatedly throughout) | Confirm Docker availability for live tests + image rebuild | ❌ Docker Desktop daemon unreachable every time it was checked |
+| Tests (a)-(e) from the brief (UI test, fake-destination test, custom-`callingAet` test, leftover-entry check, reverse-push regression) | Live verification against running containers | **BLOCKED** — Docker Desktop was down; not run, not fabricated |
+| `docker build -f Dockerfile.allinone -t rispacs:test .` | Confirm the all-in-one image still builds | **BLOCKED** — same reason |
+
+### 6. Not done yet / open questions
+
+- **Tests (a) through (e) and the image-rebuild half of (f) are blocked on
+  Docker Desktop being down.** All source-level work (the 4 fixes + their
+  unit tests + `tsc --noEmit`) is complete and verified; only the
+  live-container verification and the all-in-one rebuild remain.
+- Per the brief's own instruction, item 5 (remaining §8 items) was assessed
+  and the one candidate found — `HealthService`'s periodic raw-TCP probe to
+  Orthanc's DICOM port, the actual source of the recurring "blank Calling
+  AE" log lines identified in the investigation — was **deliberately left
+  unchanged**. Reasoning: it's a separate, already-functioning system health
+  monitor unrelated to the Modality/PACS-destination test paths this brief
+  is about, it runs on a 60-second schedule feeding alerting/health-history
+  across the whole system, and changing it carries more operational risk
+  than the cosmetic log noise it produces currently justifies within the
+  scope of this fix series.
+
+### 7. Next step / waiting for approval
+
+**Please start Docker Desktop** so I can run tests (a)-(e) and the
+all-in-one image rebuild, and report real results for those. Once Docker is
+back: I will (a) start the dev stack, log in, and test the `Old_Pacs`
+modality's "Test Connection" button expecting a real C-ECHO success
+message with response time; (b) test a fake/unused destination and confirm
+a specific, non-"unreachable" failure message; (c) create or use a
+`PacsDestination`/`ModalityDevice` test case with a custom `callingAet` and
+confirm `GET /modalities?expand` shows it as `LocalAet` during the test,
+then confirm cleanup; (d) confirm `/modalities?expand` has no leftover
+entries after all tests; (e) confirm the existing reverse-push C-ECHO test
+still works; and rebuild `rispacs:test` to confirm the all-in-one image
+still builds with these changes. All of the above is otherwise ready to
+run — I am only waiting on Docker.
