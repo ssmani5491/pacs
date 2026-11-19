@@ -46,3 +46,8 @@ deploy/allinone/*rispacs.ini
 deploy/allinone/data/
 deploy/allinone/test-data/
 dist/
+
+# throwaway smoke-test workspaces (Jenkinsfile Smoke Test stage, and local
+# manual re-runs of it) — generated CI-only secrets, never committed
+/ci-smoke/
+/ci-smoke-manual/

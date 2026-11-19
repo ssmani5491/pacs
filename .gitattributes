@@ -1,0 +1,5 @@
+# Scripts and config read by Linux processes inside the all-in-one image —
+# force LF so Windows checkouts never introduce CRLF that breaks their
+# shebang/parsing at container runtime.
+*.sh text eol=lf
+supervisord.conf text eol=lf
