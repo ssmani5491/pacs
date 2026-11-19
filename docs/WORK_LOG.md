@@ -750,3 +750,35 @@ Reviewed the newly added `Jenkinsfile` against the real repo (not Jenkins itself
 
 **7. Next step**
 Awaiting the user's next instruction. `dev` is one commit ahead of `main` (the CR-strip fix) — a deliberate merge into `main` would be the next release step whenever the user wants to cut one.
+
+## 2026-11-19 18:05 IST — Verified main/dev state (no divergence), widened .gitattributes, fast-forwarded main locally (NOT pushed)
+
+📝 Work Notes
+
+**1. What I did**
+Re-verified the actual repo state against a "fresh session" message describing the `ci-smoke-manual/` incident and asking for reconciliation steps — found that incident and its fixes (removing the tracked files, the original narrower `.gitattributes`) were already committed and pushed to both branches earlier this session, so did not redo that work. Confirmed `main` and `dev` have **not diverged** (`main` is a strict ancestor of `dev`). Widened `.gitattributes` to cover the additional file types requested (`Dockerfile*`, `*.conf`, `*.lua`, `*.py`, `*.ini.example`, `Jenkinsfile`), ran `git add --renormalize .`, confirmed every matched file (including `entrypoint.sh` and the other scripts) was already stored as LF. Committed and pushed that change to `dev`, then fast-forwarded local `main` to match `dev`. Did **not** push `main`.
+
+**2. Files changed**
+- `.gitattributes` — widened from `*.sh`/`supervisord.conf` only, to also cover `Dockerfile*`, `*.conf`, `*.lua`, `*.py`, `*.ini.example`, and `Jenkinsfile`, all with `text eol=lf`.
+
+**3. Important/risky changes**
+- `main` was fast-forwarded **locally only** (`707de51` → `0b71849`, same commit `dev` is at). `origin/main` is untouched — local `main` is 3 commits ahead of `origin/main` and nothing has been pushed to it. Holding per instruction, since pushing `main` triggers Jenkins to cut release v1.0.2.
+
+**4. Answer to item 2 (ci-smoke-manual/ real password check)**
+**No.** Already checked earlier this session (see the `2026-11-19 17:30 IST` entry above) when this directory was first found committed on `main`: `db_password.txt` held only the Jenkinsfile's own hardcoded throwaway literal, and `rispacs.ini`'s three password fields were `openssl rand -hex 16`-style random values with no `change-me` left — not real credentials. It is removed from tracking as of commit `707de51` on both branches; re-confirmed as untracked on both `main` and `dev` in this follow-up check.
+
+**5. Commands run + pass/fail**
+- `git log --oneline --graph --all -12`: linear history, no divergence — `main` is an ancestor of `dev`.
+- `git merge-base --is-ancestor main dev`: **YES**.
+- `git ls-tree -r main|dev --name-only | grep ci-smoke-manual`: **none** on either branch.
+- `git add --renormalize .`: only `.gitattributes` itself showed as changed; no file content was rewritten (everything matched was already LF).
+- Direct LF/CRLF check (via `git show HEAD:<file> | grep -c $'\r'`) against `entrypoint.sh`, `backup.sh`, `restore.sh`, `init-db.sh`, `Dockerfile.allinone`, `Jenkinsfile`, `supervisord.conf`, `on-stored.lua`, `mwl_scp.py`, `rispacs.ini.example`: **all LF**.
+- `git push origin dev`: fast-forward, `261ba64..0b71849`.
+- `git checkout main && git merge dev --no-edit`: fast-forward (no merge commit created — nothing to reconcile), `707de51..0b71849`.
+- `git push origin main`: **not run** — waiting for explicit approval.
+
+**6. Not done yet / open questions**
+- `origin/main` push is pending the user's explicit OK (it triggers the Jenkins v1.0.2 release build).
+
+**7. Next step**
+Waiting for the user to say go/no-go on `git push origin main`.
