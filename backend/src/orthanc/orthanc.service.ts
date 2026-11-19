@@ -73,12 +73,22 @@ export class OrthancService {
     return Array.isArray(res) && res.length ? res[0] : null;
   }
 
-  /** Register/update a remote modality (destination PACS) at runtime. */
-  async putModality(id: string, aet: string, host: string, port: number): Promise<void> {
+  /**
+   * Register/update a remote modality (destination PACS) at runtime.
+   * `localAet` becomes Orthanc's LocalAet for this modality entry — the
+   * Calling AE Orthanc presents when it initiates an association to this
+   * destination. When omitted/empty, Orthanc falls back to its own
+   * server-wide DicomAet (see docs/DICOM_CONNECTIVITY_ROOT_CAUSE_ANALYSIS.md
+   * root cause #3) — that fallback is Orthanc's own behavior, not something
+   * this method needs to special-case.
+   */
+  async putModality(id: string, aet: string, host: string, port: number, localAet?: string): Promise<void> {
+    const body: Record<string, any> = { AET: aet, Host: host, Port: port };
+    if (localAet) body.LocalAet = localAet;
     await this.req(`/modalities/${encodeURIComponent(id)}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ AET: aet, Host: host, Port: port }),
+      body: JSON.stringify(body),
     });
   }
 

@@ -114,7 +114,10 @@ export class ReversePushService {
       result = { ok: false, detail: `TCP connect to ${d.host}:${d.port} failed` };
     } else {
       const modId = `revpush_${d.id.slice(0, 8)}`;
-      await this.orthanc.putModality(modId, d.aeTitle, d.host, d.port);
+      // LocalAet: the destination's own configured callingAet (falls back to
+      // Orthanc's global DicomAet only when empty — see
+      // docs/DICOM_CONNECTIVITY_ROOT_CAUSE_ANALYSIS.md root cause #3).
+      await this.orthanc.putModality(modId, d.aeTitle, d.host, d.port, d.callingAet);
       result = await this.orthanc.echoModality(modId);
       await this.orthanc.deleteModality(modId);
     }
@@ -318,7 +321,7 @@ export class ReversePushService {
 
     const modId = `revpush_${dest.id.slice(0, 8)}`;
     try {
-      await this.orthanc.putModality(modId, dest.aeTitle, dest.host, dest.port);
+      await this.orthanc.putModality(modId, dest.aeTitle, dest.host, dest.port, dest.callingAet);
 
       // Send only the still-pending instances (supports retry of failed subset).
       const pendingInstances = await this.prisma.dicomTransferInstance.findMany({ where: { jobId, status: 'PENDING' }, select: { orthancInstanceId: true } });
