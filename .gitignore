@@ -39,9 +39,10 @@ replica/screens/
 .DS_Store
 Thumbs.db
 
-# all-in-one deployment secrets
-deploy/allinone/db_password.txt
-deploy/allinone/rispacs.ini
+# all-in-one deployment secrets (also covers throwaway test-* variants used
+# for isolated smoke-test runs, e.g. deploy/allinone/test-db_password.txt)
+deploy/allinone/*db_password.txt
+deploy/allinone/*rispacs.ini
 deploy/allinone/data/
 deploy/allinone/test-data/
 dist/

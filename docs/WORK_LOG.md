@@ -237,3 +237,162 @@ entries after all tests; (e) confirm the existing reverse-push C-ECHO test
 still works; and rebuild `rispacs:test` to confirm the all-in-one image
 still builds with these changes. All of the above is otherwise ready to
 run — I am only waiting on Docker.
+
+## 2026-11-19 11:15 IST — Security audit, lockout investigation, qa_tester proposal
+
+### 1. What I did
+
+Ran the read-only repository security audit requested: searched every tracked
+file and the full git history (all 8 commits at the time) for secrets, DICOM
+files, and database dumps — found none. Hardened `.gitignore` with 7
+previously-missing patterns (`*.pem`, `*.key`, `*.zip`, `*.tar`, `*.tar.gz`,
+`*.bak`, `*.dump`) as a precaution, committed and pushed. Rebuilt
+`backend`+`frontend` only (confirmed postgres/orthanc/redis untouched,
+confirmed the new fix code is present in the running container) and rebuilt
+`rispacs:test`. Started the isolated `rispacs-test` smoke-test stack
+(ports 8080/14242/14243) — still running, not yet torn down. Attempted the
+live DICOM tests via a throwaway Playwright spec; this used a now-stale
+cached password and triggered the admin account lockout the user then asked
+me to investigate. Diagnosed the lockout mechanism and the exact trigger from
+the audit log (read-only — no password, hash, or other secret was ever
+queried or displayed). Investigated the one prior `USER_PASSWORD_RESET` event
+in the audit log. Looked up the exact lockout-clearing SQL and reported it for
+approval, without running it. Proposed a `qa_tester` RBAC role +
+narrowly-scoped user, following this project's own existing `test_rp_only`/
+`test_ar_only` test-role precedent, for approval — not created yet. Added a
+`CLAUDE.md` rule per the user's explicit request: never reset/change a user's
+password without approval for that specific account.
+
+**All further login attempts against the `admin` account were stopped**, as
+instructed, until the user decides how to unlock it.
+
+### 2. Files changed
+
+- `.gitignore` — added `*.pem`, `*.key`, `*.zip`, `*.tar`, `*.tar.gz`,
+  `*.bak`, `*.dump`.
+- `CLAUDE.md` — **NEW**. One rule: never reset/change a user's password
+  without explicit per-account approval.
+- `tests/_dicom-fix-verify.spec.ts` — **NEW** (throwaway, `_`-prefixed per
+  project convention; not yet run to completion, not yet deleted — see §6).
+
+### 3. Important / risky changes
+
+**None implemented.** The one risky-adjacent action available right now —
+clearing the admin account's lockout fields — was deliberately NOT executed;
+only the exact SQL is reported below, for the user's review/approval.
+
+### 4. Problems found → cause → fix
+
+| # | Problem | Cause | Status |
+|---|---|---|---|
+| 1 | `admin` login returns 401 "Account temporarily locked" | My own test run (`_dicom-fix-verify.spec.ts`, which contains 5 separate `test()` blocks each independently calling a `login()` helper) used the **stale** password cached in `C:\Users\user\pacs_test_credentials.local` (last updated 2026-11-16, before the account's password was reset) — one wrong-password attempt pushed `failedLogins` to 8 (≥5 triggers a lock per `MAX_FAILED`), and the spec's other test blocks then each hit the already-locked guard within the same run, producing 3 near-simultaneous `LOGIN_FAILED` audit entries. Confirmed via a read-only audit-log query, joined correctly on `userId` (my first query attempt mistakenly joined on `entityId` and returned 0 rows — a query bug on my part, not a data-absence finding). | Diagnosed; **not yet fixed** — waiting on the user's decision on the unlock SQL below |
+
+### 5. Lockout mechanism — how it works (read-only, from source)
+
+From `backend/src/auth/auth.service.ts`:
+- `MAX_FAILED = 5` — 5 consecutive wrong-password attempts trigger a lock.
+- `LOCK_MINUTES = 15` — the lock lasts exactly 15 minutes from the
+  **triggering** attempt.
+- **Does it unlock automatically?** Yes — `lockedUntil` is a plain timestamp
+  15 minutes in the future; the very next successful OR attempted login after
+  that timestamp passes is allowed through again (the code checks
+  `user.lockedUntil > new Date()`). No manual action is required for it to
+  eventually clear on its own.
+- **Important nuance confirmed by this investigation**: an attempt made
+  *while already locked* does **not** extend the lock — the code's
+  locked-check branch (`auth.service.ts:69-72`) returns immediately without
+  touching `failedLogins`/`lockedUntil` at all. Only a **genuine wrong-password
+  check** (the `verifyPassword` branch) can set a new lock. This means
+  repeated attempts against an already-locked account are logged but
+  harmless to the timer — but a single fresh wrong-password attempt (e.g.
+  from a stale cached password) can re-trigger/extend it.
+
+**Current state** (read-only query, no password/hash column selected):
+```
+username | failedLogins |       lockedUntil       | currently_locked
+admin    |            8 | 2026-11-19 05:49:19.532 | t
+```
+Unlocks automatically at **2026-11-19 05:49:19 UTC** with no action needed,
+or can be cleared immediately with the SQL in §6.
+
+**Which earlier session reset the admin password, and why**: the audit log
+shows exactly one `USER_PASSWORD_RESET` event for `admin`, timestamped
+**2026-11-18 05:37:56**. This matches this same long-running conversation's
+earlier work building and testing the admin "Reset Password" UI feature
+(an unrelated, user-requested feature-development task, well before the
+DICOM investigation/fix work) — the live `admin` account was used as the test
+subject for that feature's end-to-end test at the time, which is what
+desynchronized the account's real password from the cached credentials file
+`C:\Users\user\pacs_test_credentials.local` (last updated two days earlier,
+on 2026-11-16).
+
+### 6. Unlock SQL — for review/approval, NOT executed
+
+```sql
+UPDATE users
+SET "failedLogins" = 0, "lockedUntil" = NULL
+WHERE username = 'admin';
+```
+Clears only the two lockout-tracking fields; does not read, write, or
+reference `passwordHash` in any way.
+
+### 7. qa_tester proposal — for approval, NOT created yet
+
+Following this project's own existing pattern (`test_rp_only`/`test_ar_only`
+test-only roles already defined in `backend/src/rbac/permissions.ts` for a
+different test suite), propose adding:
+
+```ts
+// backend/src/rbac/permissions.ts, inside the ROLES catalogue
+qa_tester: {
+  name: 'QA Tester — Modality & Reverse-Push Only',
+  permissions: [
+    PERMISSIONS.MODALITY_MANAGE,
+    PERMISSIONS.PACS_REVERSE_PUSH_VIEW,
+    PERMISSIONS.PACS_REVERSE_PUSH_MANAGE,
+    PERMISSIONS.PACS_DESTINATION_MANAGE,
+  ],
+},
+```
+These are exactly (and only) the four permissions every endpoint touched by
+the brief's tests a-e actually requires (confirmed by reading every
+`@RequirePermissions` decorator on `ModalitiesController` and
+`ReversePushController`) — no `user.manage`, no `super_admin`, no access to
+patients, reports, or any other module.
+
+A corresponding user would then be created the same way `seed.ts` creates
+the `admin` account (same `argon2id` hashing, a password supplied via a new
+`QA_TESTER_SEED_PASSWORD` env var — never hard-coded — with the exact same
+"only evaluated if the account doesn't already exist" idempotency guard the
+existing seed already uses for `admin`), assigned the `qa_tester` role
+instead of `super_admin`.
+
+**Not implemented.** Waiting for approval on both the role definition and the
+seed approach before writing any code, and before adding the resulting
+password to the protected credentials file.
+
+### 8. Not done yet / open questions
+
+- Admin account unlock: waiting for the user's decision (run the SQL
+  themselves, approve me running it, or just wait the ~34 minutes remaining
+  until automatic unlock).
+- Per the "log in ONCE, if it fails STOP" instruction in the user's second
+  message: **I have not attempted any login since being told to stop**, and
+  will not until the account is confirmed unlocked.
+- Live tests (a)-(e): blocked on the above.
+- Test (f): the isolated `rispacs-test` smoke-test stack is up and healthy
+  (ports 8080/14242/14243, `rispacs:test` rebuilt today) but not yet
+  exercised or torn down — holding it as-is pending the user's go-ahead,
+  since it's isolated from the dev stack and admin account entirely.
+- `qa_tester` role/user: proposed above, not created — waiting for approval.
+- `tests/_dicom-fix-verify.spec.ts`: left in place (not deleted) since it
+  will be reused once login works again; will be deleted before this task's
+  final cleanup per the project's established throwaway-test-script
+  convention.
+
+### 9. Next step / waiting for approval
+
+Waiting on: (1) how to handle the admin unlock (run the SQL myself, you run
+it, or wait it out); (2) approval of the `qa_tester` role/user plan in §7;
+(3) once unlocked, permission to attempt login exactly once as instructed.
+No further login attempts will be made until then.
