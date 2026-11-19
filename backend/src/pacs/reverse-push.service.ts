@@ -114,12 +114,18 @@ export class ReversePushService {
       result = { ok: false, detail: `TCP connect to ${d.host}:${d.port} failed` };
     } else {
       const modId = `revpush_${d.id.slice(0, 8)}`;
-      // LocalAet: the destination's own configured callingAet (falls back to
-      // Orthanc's global DicomAet only when empty — see
-      // docs/DICOM_CONNECTIVITY_ROOT_CAUSE_ANALYSIS.md root cause #3).
-      await this.orthanc.putModality(modId, d.aeTitle, d.host, d.port, d.callingAet);
-      result = await this.orthanc.echoModality(modId);
-      await this.orthanc.deleteModality(modId);
+      try {
+        // LocalAet: the destination's own configured callingAet (falls back to
+        // Orthanc's global DicomAet only when empty — see
+        // docs/DICOM_CONNECTIVITY_ROOT_CAUSE_ANALYSIS.md root cause #3).
+        await this.orthanc.putModality(modId, d.aeTitle, d.host, d.port, d.callingAet);
+        const echo = await this.orthanc.echoModality(modId, d.associationTimeout);
+        result = { ok: echo.ok, detail: echo.detail };
+      } finally {
+        // Always deregister, even if putModality/echoModality threw — a failed
+        // test must never leave a leftover /modalities entry (see §8 item 4).
+        await this.orthanc.deleteModality(modId);
+      }
     }
     await this.prisma.pacsDestination.update({
       where: { id }, data: { lastTestAt: new Date(), lastTestStatus: result.ok ? 'SUCCESS' : 'FAILED', lastTestDetail: result.detail ?? (result.ok ? 'C-ECHO OK' : 'failed') },
