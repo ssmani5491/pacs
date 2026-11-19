@@ -239,11 +239,22 @@ pipeline {
               docker network create ${net}
               mkdir -p ci-smoke && printf 'ci-smoke-password' > ci-smoke/db_password.txt
 
-              # CI-only rispacs.ini: fill in the example's change-me placeholders, each
-              # with its own random throwaway value. Never committed; lives only in
-              # ci-smoke/ and is removed in the finally block below.
-              awk '{ while (match($0, /change-me/)) { cmd="openssl rand -hex 16"; cmd | getline r; close(cmd); $0 = substr($0,1,RSTART-1) r substr($0,RSTART+RLENGTH) } print }' \
-                deploy/allinone/rispacs.ini.example > ci-smoke/rispacs.ini
+              # CI-only rispacs.ini: replace only the lines whose VALUE is the literal
+              # change-me placeholder, each with its own random throwaway value, and
+              # drop that line's trailing "; CHANGE ME" reminder comment with it (the
+              # same as an operator would when actually setting the value) so ini_get's
+              # comment-unaware parser doesn't pick up stray comment text. A line like
+              # "public_host = 192.168.1.50 ; CHANGE ME" is a real value with just a
+              # reminder comment, so it is left untouched. Never committed; lives only
+              # in ci-smoke/ and is removed in the finally block below.
+              awk '
+                match(\$0, /=[ \\t]*change-me([ \\t]*;.*)?\$/) {
+                  cmd="openssl rand -hex 16"; cmd | getline r; close(cmd)
+                  gsub(/\\r/, "", r)
+                  sub(/=[ \\t]*change-me([ \\t]*;.*)?\$/, "= " r)
+                }
+                { print }
+              ' deploy/allinone/rispacs.ini.example > ci-smoke/rispacs.ini
 
               docker run -d --name ${proj}-postgres --network ${net} --network-alias postgres \
                 -e POSTGRES_USER=pacs \
