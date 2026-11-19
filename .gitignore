@@ -24,6 +24,17 @@ backups/
 seed/dicom/*.dcm
 replica/screens/
 
+# certs / keys
+*.pem
+*.key
+
+# archives / dumps / backups — never commit (security audit, 2026-11-19)
+*.zip
+*.tar
+*.tar.gz
+*.bak
+*.dump
+
 # OS
 .DS_Store
 Thumbs.db
