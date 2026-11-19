@@ -157,4 +157,15 @@ export const ROLES: Record<string, { name: string; permissions: PermissionKey[] 
     name: 'Test — Archive View Only (no patient.view)',
     permissions: [PERMISSIONS.PACS_ARCHIVE_VIEW],
   },
+  // Dev-only QA account for automated Modality/reverse-push testing — never
+  // super_admin, never used for anything outside those two features.
+  qa_tester: {
+    name: 'QA Tester — Modality & Reverse-Push Only',
+    permissions: [
+      PERMISSIONS.MODALITY_MANAGE,
+      PERMISSIONS.PACS_REVERSE_PUSH_VIEW,
+      PERMISSIONS.PACS_REVERSE_PUSH_MANAGE,
+      PERMISSIONS.PACS_DESTINATION_MANAGE,
+    ],
+  },
 };
