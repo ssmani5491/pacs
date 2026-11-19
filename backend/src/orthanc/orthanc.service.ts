@@ -20,7 +20,19 @@ export class OrthancService {
       ...init,
       headers: { Authorization: this.authHeader, ...(init.headers ?? {}) },
     });
-    if (!res.ok) throw new Error(`Orthanc ${path} -> ${res.status}`);
+    if (!res.ok) {
+      // Capture the response body (Orthanc typically reports a specific
+      // Message/HttpError describing WHY an operation failed, e.g. an
+      // association rejection reason) instead of discarding it. Never log
+      // or surface the Authorization header here.
+      let bodyText = '';
+      try { bodyText = await res.text(); } catch { /* body unreadable, fall through with status only */ }
+      this.log.warn(`Orthanc ${path} -> ${res.status}${bodyText ? `: ${bodyText.slice(0, 500)}` : ''}`);
+      const err: any = new Error(`Orthanc ${path} -> ${res.status}${bodyText ? `: ${bodyText.slice(0, 300)}` : ''}`);
+      err.status = res.status;
+      err.body = bodyText;
+      throw err;
+    }
     const ct = res.headers.get('content-type') ?? '';
     return ct.includes('application/json') ? res.json() : res.text();
   }
