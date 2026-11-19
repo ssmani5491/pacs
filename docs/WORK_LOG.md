@@ -710,3 +710,43 @@ All four approved items are complete: `qa_tester` created and verified;
 Pivotal C-ECHO success confirmed via reverse-push and the temp destination
 deactivated; full regression suite green (70/70 + 48/48); `v1.0.1` tagged
 and pushed. Nothing further pending from this task.
+
+## 2026-11-19 17:30 IST — Jenkinsfile review, fixes, branching (dev/main split), smoke-test verified end-to-end
+
+📝 Work Notes
+
+**1. What I did**
+Reviewed the newly added `Jenkinsfile` against the real repo (not Jenkins itself). Confirmed the Dockerfile path, backend dir, and `npm ci && npx prisma generate && npx tsc --noEmit && npx jest --ci` command were all correct as written. Found and fixed 4 real bugs in the Smoke Test and Offline Bundle stages, ran the fixed Smoke Test commands locally end-to-end (isolated project, cleaned up after), confirmed the Backend Tests command passes for real, created and pushed a `dev` branch, documented the new dev/main release process, and reconciled a manual commit/push the user made directly to `main` mid-task (merging `main` into `dev`, removing an accidentally-committed throwaway test directory, and adding `.gitattributes` for LF line endings).
+
+**2. Files changed**
+- `Jenkinsfile` (**NEW**, added by user; fixed by me) — Smoke Test stage: added `POSTGRES_USER`/`POSTGRES_DB`/`ORTHANC_DB_NAME` env vars + `scripts/init-db.sh` mount on the postgres container; added the missing `POSTGRES_PASSWORD_FILE` env var on the app container; replaced the verbatim-copied `rispacs.ini.example` with a generator that replaces each `change-me` value with its own `openssl rand -hex 16` value (and, after live testing, fixed to strip a stray `\r` from that value and to only touch lines whose value is literally `change-me`, never a real value followed by a `; CHANGE ME` reminder comment). Offline Bundle stage: added `db_password.txt.example` to the copied file list.
+- `deploy/allinone/README.md` — added a short "Release process" section documenting the dev/main workflow.
+- `.gitignore` — added `/ci-smoke/` and `/ci-smoke-manual/` (throwaway smoke-test workspaces must never be committed).
+- `.gitattributes` (**NEW**) — `*.sh text eol=lf` and `supervisord.conf text eol=lf`, so a Windows checkout can't introduce CRLF that breaks a Linux script/config inside the image.
+- `ci-smoke-manual/db_password.txt`, `ci-smoke-manual/rispacs.ini` — removed from git tracking (committed by mistake during manual local testing).
+
+**3. Important/risky changes**
+- Reconciled a manual push the user made directly to `main` (a "test commit" containing the Jenkinsfile, README change, and an accidentally-committed `ci-smoke-manual/` directory) mid-task. Checked the committed `ci-smoke-manual/` files before removing them: `db_password.txt` held only the hardcoded throwaway literal `ci-smoke-password` (the same one the Jenkinsfile itself writes for the smoke test), and `rispacs.ini`'s `seed_password`/`services_ui.password`/`orthanc.password` were all 32-character hex values matching `openssl rand -hex 16` output with no leftover `change-me` — **no real credentials were ever committed**.
+- Merged `main` into `dev` (fast-forward only, `7e4dff7..707de51`) to bring them back in sync per the user's request — no force-push, no history rewrite. Pushed both branches only after explicit confirmation, since the user's instruction was "tell me before pushing to main."
+- A later fix (CR-stripping in the ini generator, discovered only by actually running the smoke test) was committed and pushed to `dev` only, intentionally leaving `main` one commit behind — this now matches the documented release process (work lands on `dev`; `main` only moves on a deliberate release merge).
+
+**4. Problems found → cause → fix**
+- Smoke Test's postgres container was missing `POSTGRES_USER`/`POSTGRES_DB`/`ORTHANC_DB_NAME` and the `init-db.sh` mount → the second (`orthanc`) database would never be created → added all four.
+- Smoke Test's app container mounted the password file but never set `POSTGRES_PASSWORD_FILE` in its own environment → `entrypoint.sh` would see an empty `DB_PASSWORD` and fail its own startup validation → added the env var.
+- Smoke Test copied `rispacs.ini.example` verbatim, leaving 3 literal `change-me` values that `entrypoint.sh` explicitly rejects at startup → replaced with a generator that fills in random values.
+- First generator attempt crash-looped Orthanc with "Badly formatted list of users" (exit 255) — traced via `supervisorctl tail orthanc stderr` and `/tmp/orthanc.json` inside a kept-alive debug container to a stray `\r` from `openssl rand -hex 16`'s CRLF output under Git Bash on Windows, picked up by `awk`'s `getline` (which only strips `\n`) and embedded inside the generated JSON string. Fixed by explicitly `gsub(/\r/, "", r)`-ing the captured value; also narrowed the match to only replace a line whose *value* is literally `change-me`, so a real value with its own `; CHANGE ME` reminder comment (like `public_host`) is never touched. Re-verified clean after the fix.
+- Offline Bundle's file list was missing `db_password.txt.example` compared to `build-release.sh`'s own list → added it (confirmed the file exists at `deploy/allinone/db_password.txt.example`).
+
+**5. Commands run + pass/fail**
+- Backend Tests command (`npm ci --no-audit --no-fund && npx prisma generate && npx tsc --noEmit && npx jest --ci`) inside `node:24-slim` against the real `backend/`: **PASS** — 11/11 suites, 48/48 tests, `tsc --noEmit` clean, exit code 0.
+- Smoke Test commands, run locally in an isolated `rispacs-manualcheck-<timestamp>` project/network against a locally-tagged copy of the existing `ourcompany/rispacs:1.0.0` image, cleaned up automatically on every run via a trap: first 2 attempts **FAIL** (Git-Bash path-mangling on the `-v` mounts, then the stray-`\r` Orthanc crash); final attempt **PASS** — container reported `healthy`, all 5 supervisord processes (`backend`, `mwl-scp`, `nginx`, `orthanc`, `redis`) reached `RUNNING`.
+- `git fetch origin`, `git branch -a`: confirmed only `main` existed before this task; `dev` created from `main` and pushed.
+- `git merge main --no-edit` (while on `dev`): fast-forward, no conflicts.
+- `git push origin dev`, `git push origin main`: both fast-forward, no force, pushed only after explicit user confirmation for `main`.
+- Dev stack (`pacs-replica-*` containers) confirmed untouched throughout — checked before and after every smoke-test run.
+
+**6. Not done yet / open questions**
+- None outstanding from this task's explicit scope. The user has said "from now on, you handle all git operations; tell me before pushing to main" — noted as a standing instruction going forward.
+
+**7. Next step**
+Awaiting the user's next instruction. `dev` is one commit ahead of `main` (the CR-strip fix) — a deliberate merge into `main` would be the next release step whenever the user wants to cut one.
