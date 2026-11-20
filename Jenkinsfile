@@ -74,14 +74,21 @@ pipeline {
     stage('Backend Tests') {
       when { anyOf { branch 'main'; branch 'dev' } }
       steps {
-        sh '''
-          set -eu
-          docker run --rm \
-            -u "$(id -u):$(id -g)" -e HOME=/tmp -e CI=true \
-            -v "${WORKSPACE}/${BACKEND_DIR}:/app" -w /app \
-            ${NODE_IMAGE} \
-            sh -c "npm ci --no-audit --no-fund && npx prisma generate && npx tsc --noEmit && npx jest --ci"
-        '''
+        // retry: a Jenkins controller restart mid-step breaks the durable-task
+        // wrapper's heartbeat ("wrapper script does not seem to be touching the
+        // log file"), which fails this step even when the command inside it
+        // actually completed and passed. One retry re-runs the whole docker run
+        // cleanly instead of requiring a manual full-pipeline re-trigger.
+        retry(2) {
+          sh '''
+            set -eu
+            docker run --rm \
+              -u "$(id -u):$(id -g)" -e HOME=/tmp -e CI=true \
+              -v "${WORKSPACE}/${BACKEND_DIR}:/app" -w /app \
+              ${NODE_IMAGE} \
+              sh -c "npm ci --no-audit --no-fund && npx prisma generate && npx tsc --noEmit && npx jest --ci"
+          '''
+        }
       }
     }
 
